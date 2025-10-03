@@ -18,7 +18,13 @@ const loginSchema = z.object({
         .trim(),
 });
 
-export async function login(prevState: any, formData: FormData) {
+export type State = {
+    errors?: {
+        email?: string[];
+    };
+} | undefined;
+
+export async function login(prevState: State, formData: FormData) {
     const payload = {
         email: formData.get('email'),
         password: formData.get('password'),
@@ -36,7 +42,6 @@ export async function login(prevState: any, formData: FormData) {
     const {email, password} = result.data;
 
     if (email !== testUser.email || password !== testUser.password) {
-        console.log('email', email, 'password', password);
         return {
             errors: {
                 email: ["Некорректный email или пароль"],
@@ -44,9 +49,7 @@ export async function login(prevState: any, formData: FormData) {
         };
     }
 
-    console.log("login before createSession", testUser.id);
     await createSession(testUser.id);
-    console.log("login before redirect");
     redirect("/dashboard");
 }
 

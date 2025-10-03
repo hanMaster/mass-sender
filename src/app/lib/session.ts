@@ -12,11 +12,8 @@ type SessionPayload = {
 }
 
 export async function createSession(userId: string) {
-    console.log('[createSession]', userId);
     const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
     const session = await encrypt({userId, expiresAt});
-
-    console.log('[createSession]', JSON.stringify(session));
 
     (await cookies()).set("session", session, {
         httpOnly: true,
