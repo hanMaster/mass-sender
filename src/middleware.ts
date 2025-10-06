@@ -1,7 +1,8 @@
 import {NextRequest, NextResponse} from "next/server";
 import {decrypt} from "@/app/lib/session";
 
-const protectedRoutes = ["/", "/dashboard"];
+const protectedRoutes = ["/", "/dashboard", "/admin"];
+const adminRoutes = ["/admin"];
 const publicRoutes = ["/login"];
 
 export async function middleware(req: NextRequest) {
@@ -9,12 +10,17 @@ export async function middleware(req: NextRequest) {
     const path = req.nextUrl.pathname;
     const isProtectedRoute = protectedRoutes.includes(path);
     const isPublicRoute = publicRoutes.includes(path);
-
+    const isAdminRoute = adminRoutes.includes(path);
     const cookie = req.cookies.get('session')?.value
     const session = await decrypt(cookie);
 
     if (isProtectedRoute && !session) {
         url.pathname = '/login'
+        return NextResponse.redirect(url);
+    }
+
+    if (isAdminRoute && session?.role !== 'admin') {
+        url.pathname = '/dashboard'
         return NextResponse.redirect(url);
     }
 

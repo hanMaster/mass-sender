@@ -3,12 +3,8 @@
 import {z} from "zod";
 import {createSession, deleteSession} from "@/app/lib/session";
 import {redirect} from "next/navigation";
-
-const testUser = {
-    id: "1",
-    email: "contact@cosdensolutions.io",
-    password: "12345678",
-};
+import {fetchUser} from "@/app/lib/data/users";
+import bcrypt from "bcrypt";
 
 const loginSchema = z.object({
     email: z.email({message: "Invalid email address"}).trim(),
@@ -40,8 +36,8 @@ export async function login(prevState: State, formData: FormData) {
     }
 
     const {email, password} = result.data;
-
-    if (email !== testUser.email || password !== testUser.password) {
+    const user = await fetchUser(email);
+    if (!user) {
         return {
             errors: {
                 email: ["Некорректный email или пароль"],
@@ -49,7 +45,17 @@ export async function login(prevState: State, formData: FormData) {
         };
     }
 
-    await createSession(testUser.id);
+    const isEqual = await bcrypt.compare(password, user.password);
+
+    if (!isEqual) {
+        return {
+            errors: {
+                email: ["Некорректный email или пароль"],
+            },
+        };
+    }
+
+    await createSession(user);
     redirect("/dashboard");
 }
 

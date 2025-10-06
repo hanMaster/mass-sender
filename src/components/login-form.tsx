@@ -47,10 +47,7 @@ export function LoginForm({
 
                             </div>
                             <div className="grid gap-3">
-                                <div className="flex items-center">
-                                    <Label htmlFor="password">Пароль</Label>
-
-                                </div>
+                                <Label htmlFor="password">Пароль</Label>
                                 <Input id="password" name="password" type="password" required/>
                             </div>
                             {state?.errors?.email && (
