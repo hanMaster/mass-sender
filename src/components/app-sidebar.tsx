@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import {IconDashboard, IconInnerShadowTop, IconListDetails,} from "@tabler/icons-react"
+import {IconDashboard, IconFileFilled, IconInnerShadowTop, IconMailFilled, IconSettingsCog,} from "@tabler/icons-react"
 
 import {NavMain} from "@/components/nav-main"
 import {NavUser} from "@/components/nav-user"
@@ -19,16 +19,28 @@ import {SessionPayload} from "@/app/lib/session";
 const data = {
     navMain: [
         {
-            title: "Dashboard",
-            url: "#",
+            title: "Главная",
+            url: "/dashboard",
             icon: IconDashboard,
         },
         {
-            title: "Lifecycle",
-            url: "#",
-            icon: IconListDetails,
+            title: "Файлы",
+            url: "/files",
+            icon: IconFileFilled,
+        },
+        {
+            title: "Рассылки",
+            url: "/mailing",
+            icon: IconMailFilled,
         }
     ],
+    navAdmin: [
+        {
+            title: "Настройки",
+            url: "/settings",
+            icon: IconSettingsCog,
+        }
+    ]
 }
 
 export function AppSidebar({user, ...props}: React.ComponentProps<typeof Sidebar> & { user: SessionPayload }) {
@@ -51,7 +63,7 @@ export function AppSidebar({user, ...props}: React.ComponentProps<typeof Sidebar
                 </SidebarMenu>
             </SidebarHeader>
             <SidebarContent>
-                <NavMain items={data.navMain}/>
+                <NavMain items={user.role === 'admin' ? [...data.navMain, ...data.navAdmin] : data.navMain}/>
             </SidebarContent>
             <SidebarFooter>
                 <NavUser user={user}/>
