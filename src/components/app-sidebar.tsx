@@ -14,7 +14,7 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from "@/components/ui/sidebar"
-import {SessionPayload} from "@/app/lib/session";
+import {SessionPayload} from "@/lib/session";
 
 const data = {
     navMain: [
@@ -22,6 +22,11 @@ const data = {
             title: "Главная",
             url: "/dashboard",
             icon: IconDashboard,
+        },
+        {
+            title: "Шаблоны",
+            url: "/templates",
+            icon: IconFileFilled,
         },
         {
             title: "Файлы",

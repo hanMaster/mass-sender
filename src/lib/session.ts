@@ -2,7 +2,7 @@ import "server-only";
 
 import {SignJWT, jwtVerify} from 'jose'
 import {cookies} from "next/headers";
-import {User} from "@/app/lib/data/definitions";
+import {User} from "@/lib/data/definitions";
 
 const secretKey = "7up4LKZHGXz90yhsGqflElOs+RmnG5Hbyz3zutxZOrM=";
 const encodedKey = new TextEncoder().encode(secretKey);

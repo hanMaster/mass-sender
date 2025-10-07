@@ -1,5 +1,5 @@
 import {SiteHeader} from "@/components/site-header";
-import DocumentUploadForm from "@/app/(loggedIn)/(admin)/template/DocumentUploadForm";
+import DocumentUploadForm from "@/app/(loggedIn)/templates/add/DocumentUploadForm";
 
 export default function TemplatePage() {
     return (

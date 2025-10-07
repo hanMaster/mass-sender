@@ -29,19 +29,44 @@ async function migrateUsers() {
     `;
 }
 
+async function migrateTemplates() {
+    await sql`
+        CREATE TABLE IF NOT EXISTS templates
+        (
+            id
+            UUID
+            DEFAULT
+            uuid_generate_v4
+        (
+        ) PRIMARY KEY,
+            filename VARCHAR
+        (
+            255
+        ) NOT NULL,
+            comment VARCHAR
+        (
+            100
+        ) NOT NULL,
+            created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+            deleted_at TIMESTAMPTZ DEFAULT NULL
+            );
+    `;
+}
+
 async function seedAdmin() {
     const hashedPassword = await bcrypt.hash('!Q@W#E$R%T6y', 10);
     return sql`
         INSERT INTO users (name, email, role, password)
         VALUES ('Andrey Khalepov', 'khalepov.an@dnsgroup.ru', 'admin', ${hashedPassword});
-      `;
+    `;
 }
 
 export async function GET() {
     try {
         await sql.begin(() => [
             // migrateUsers(),
-            seedAdmin(),
+            // seedAdmin(),
+            // migrateTemplates()
         ]);
 
         return Response.json({message: 'Database seeded successfully'});

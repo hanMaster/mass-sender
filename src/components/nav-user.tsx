@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import {SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar,} from "@/components/ui/sidebar"
 import {logout} from "@/app/login/actions";
-import {SessionPayload} from "@/app/lib/session";
+import {SessionPayload} from "@/lib/session";
 
 export function NavUser({user}: { user: SessionPayload }) {
     const {isMobile} = useSidebar()

@@ -4,8 +4,8 @@ import {useCallback, useState} from 'react';
 import {useDropzone} from 'react-dropzone';
 import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
-import {uploadFormSchema, UploadFormData} from '@/app/lib/schemas';
-import {uploadDocument} from '@/app/actions/upload';
+import {uploadFormSchema, UploadFormData} from '@/lib/schemas';
+import {uploadDocument} from '@/actions/upload';
 
 export default function DocumentUploadForm() {
     const [uploadResult, setUploadResult] = useState<{

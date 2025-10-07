@@ -1,5 +1,5 @@
 import {NextRequest, NextResponse} from "next/server";
-import {decrypt} from "@/app/lib/session";
+import {decrypt} from "@/lib/session";
 
 const protectedRoutes = ["/", "/dashboard"];
 const adminRoutes = ["/settings"];

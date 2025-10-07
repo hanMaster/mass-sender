@@ -1,4 +1,4 @@
-import {getSession} from "@/app/lib/dal";
+import {getSession} from "@/lib/dal";
 import {SiteHeader} from "@/components/site-header";
 import {SectionCards} from "@/components/section-cards";
 import {DataTable} from "@/components/data-table";

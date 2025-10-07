@@ -1,7 +1,7 @@
 import {CSSProperties, ReactNode} from "react";
-import {getSession} from "@/app/lib/dal";
+import {getSession} from "@/lib/dal";
 import {redirect} from "next/navigation";
-import {SessionPayload} from "@/app/lib/session";
+import {SessionPayload} from "@/lib/session";
 import {SidebarInset, SidebarProvider} from "@/components/ui/sidebar";
 import {AppSidebar} from "@/components/app-sidebar";
 

@@ -1,5 +1,5 @@
 import postgres from 'postgres';
-import {User} from "@/app/lib/data/definitions";
+import {User} from "@/lib/data/definitions";
 
 const sql = postgres(process.env.POSTGRES_URL!, {ssl: 'require'});
 

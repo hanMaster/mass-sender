@@ -5,3 +5,10 @@ export type User = {
     role: string;
     password: string;
 };
+
+export type Template = {
+    id: string;
+    filename: string;
+    comment: string;
+    created_at: Date;
+};

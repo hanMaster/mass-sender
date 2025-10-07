@@ -1,7 +1,7 @@
 import 'server-only'
 
 import {cookies} from 'next/headers'
-import {decrypt, SessionPayload} from '@/app/lib/session'
+import {decrypt, SessionPayload} from '@/lib/session'
 import {cache} from "react";
 import {redirect} from "next/navigation";
 import {JWTPayload} from "jose";

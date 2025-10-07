@@ -1,8 +1,7 @@
 'use server';
 
-import {uploadFormSchema} from '@/app/lib/schemas';
+import {uploadFormSchema} from '@/lib/schemas';
 import * as fs from "node:fs";
-import {dirname} from "path";
 // import {revalidatePath} from 'next/cache';
 // import {redirect} from 'next/navigation';
 
@@ -45,7 +44,7 @@ export async function uploadDocument(formData: FormData) {
 
         const buffer = new Uint8Array(rawBuffer);
 
-        const filePath = './upload/template.docx' ;
+        const filePath = './upload/add.docx' ;
         fs.writeFile(filePath, buffer, (err) => {
             if (err) {
                 console.error('Error writing binary file:', err);

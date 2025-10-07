@@ -1,9 +1,9 @@
 "use server";
 
 import {z} from "zod";
-import {createSession, deleteSession} from "@/app/lib/session";
+import {createSession, deleteSession} from "@/lib/session";
 import {redirect} from "next/navigation";
-import {fetchUser} from "@/app/lib/data/users";
+import {fetchUser} from "@/lib/data/users";
 import bcrypt from "bcrypt";
 
 const loginSchema = z.object({
