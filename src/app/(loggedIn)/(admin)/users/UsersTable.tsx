@@ -3,6 +3,7 @@ import {Button} from "@/components/ui/button";
 import {IconPlus} from "@tabler/icons-react";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import {fetchUsers} from "@/lib/data/users";
+import {DeleteButton} from "@/app/(loggedIn)/(admin)/users/DeleteButton";
 
 
 export default async function UsersTable() {
@@ -20,7 +21,7 @@ export default async function UsersTable() {
                 <TableHeader>
                     <TableRow>
                         <TableHead className="w-[100px]">№</TableHead>
-                        <TableHead>ФИО</TableHead>
+                        <TableHead>Имя и фамилия</TableHead>
                         <TableHead className="w-[400px]">Email</TableHead>
                         <TableHead className="w-[200px]">Роль</TableHead>
                     </TableRow>
@@ -32,11 +33,11 @@ export default async function UsersTable() {
                             <TableCell className="font-medium">{index + 1}</TableCell>
                             <TableCell>{u.name}</TableCell>
                             <TableCell>{u.email}</TableCell>
-                            <TableCell>{u.role}</TableCell>
+                            <TableCell>{u.role === 'user' ? 'Пользователь' : 'Администратор'}</TableCell>
 
-                            {/*<TableCell className="text-right">*/}
-                            {/*    <DeleteButton id={u.id}/>*/}
-                            {/*</TableCell>*/}
+                            <TableCell className="text-right">
+                                <DeleteButton id={u.id}/>
+                            </TableCell>
                         </TableRow>
                     )}
                 </TableBody>
