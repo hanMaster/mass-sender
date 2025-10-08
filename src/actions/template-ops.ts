@@ -34,8 +34,8 @@ export async function uploadDocument(formData: FormData) {
         const {file: uploadedFile, comment: validatedComment} = validatedData.data;
         const rawBuffer = await uploadedFile.arrayBuffer();
         const buffer = new Uint8Array(rawBuffer);
-        const filename = `template_${Date.now()}.docx`;
-        const filePath = `./upload/${filename}`;
+        const filename = `tpl_${Date.now()}.docx`;
+        const filePath = `./templates/${filename}`;
         fs.writeFile(filePath, buffer, (err) => {
             if (err) {
                 console.error('Error writing binary file:', err);
@@ -65,7 +65,7 @@ export async function uploadDocument(formData: FormData) {
 }
 
 export async function removeTemplateFile(filename: string) {
-    const filePath = `./upload/${filename}`;
+    const filePath = `./templates/${filename}`;
     fs.unlink (filePath, (err) => {
         if (err) {
             console.error('Error deleting file:', err);
