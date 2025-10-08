@@ -31,14 +31,15 @@ export async function addTemplate({filename, comment}: TemplateForAdd) {
 
 export async function removeTemplate(id: string) {
     try {
-        const row = await sql<Template[]>`SELECT * FROM templates WHERE id=${id};`;
+        const row = await sql<Template[]>`SELECT *
+                                          FROM templates
+                                          WHERE id = ${id};`;
 
         const filename = row[0].filename;
         await removeTemplateFile(filename);
-        const data = await sql`DELETE
-                               FROM templates
-                               WHERE id = ${id}`;
-        console.log('[removeTemplate] id: ', id, data);
+        await sql`DELETE
+                  FROM templates
+                  WHERE id = ${id}`;
         revalidatePath('/templates');
     } catch {
         throw new Error('Database Error: Failed to remove template.');

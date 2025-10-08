@@ -1,14 +1,7 @@
 "use client"
 
 import * as React from "react"
-import {
-    IconBrandMailgun,
-    IconFileFilled,
-    IconFileTypeDocx,
-    IconInnerShadowTop,
-    IconMailFilled,
-    IconSettingsCog, IconUserCog,
-} from "@tabler/icons-react"
+import {IconBrandMailgun, IconFileFilled, IconFileTypeDocx, IconMailFilled, IconUserCog,} from "@tabler/icons-react"
 
 import {NavMain} from "@/components/nav-main"
 import {NavUser} from "@/components/nav-user"
