@@ -5,7 +5,9 @@ import {useDropzone} from 'react-dropzone';
 import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {uploadFormSchema, UploadFormData} from '@/lib/schemas';
-import {uploadDocument} from '@/actions/upload';
+import {uploadDocument} from '@/actions/template-ops';
+import {toast} from "sonner";
+import {redirect} from "next/navigation";
 
 export default function DocumentUploadForm() {
     const [uploadResult, setUploadResult] = useState<{
@@ -60,6 +62,8 @@ export default function DocumentUploadForm() {
 
         if (result.success) {
             reset();
+            toast.success('Шаблон загружен успешно!');
+            redirect('/templates');
         }
     };
 

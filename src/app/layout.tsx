@@ -2,6 +2,7 @@ import type {Metadata} from "next";
 import {ReactNode} from "react";
 import {Geist, Geist_Mono} from "next/font/google";
 import {ThemeProvider} from "@/components/providers/theme-provider";
+import {Toaster} from "@/components/ui/sonner";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -32,6 +33,7 @@ export default function RootLayout({children}: Readonly<{ children: ReactNode }>
             disableTransitionOnChange
             enableColorScheme
         >
+            <Toaster position='top-center'/>
             {children}
         </ThemeProvider>
         </body>

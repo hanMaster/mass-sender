@@ -1,8 +1,9 @@
 import Link from "next/link";
-import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow,} from "@/components/ui/table";
 import {Button} from "@/components/ui/button";
 import {IconPlus} from "@tabler/icons-react";
 import {fetchTemplates} from "@/lib/data/templates";
+import {DeleteButton} from "@/app/(loggedIn)/templates/DeleteButton";
+import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 
 
 export default async function TemplatesTable() {
@@ -32,7 +33,9 @@ export default async function TemplatesTable() {
                             <TableCell className="font-medium">{index + 1}</TableCell>
                             <TableCell>{item.comment}</TableCell>
                             <TableCell>{`${item.created_at.toLocaleDateString()} ${item.created_at.toLocaleTimeString()}`}</TableCell>
-                            <TableCell className="text-right cursor-pointer">Удалить</TableCell>
+                            <TableCell className="text-right">
+                                <DeleteButton id={item.id}/>
+                            </TableCell>
                         </TableRow>
                     )}
                 </TableBody>

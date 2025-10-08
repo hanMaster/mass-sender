@@ -12,3 +12,8 @@ export type Template = {
     comment: string;
     created_at: Date;
 };
+
+export type TemplateForAdd = {
+    filename: string;
+    comment: string;
+};

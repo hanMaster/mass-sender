@@ -1,7 +1,14 @@
 "use client"
 
 import * as React from "react"
-import {IconDashboard, IconFileFilled, IconInnerShadowTop, IconMailFilled, IconSettingsCog,} from "@tabler/icons-react"
+import {
+    IconBrandMailgun,
+    IconFileFilled,
+    IconFileTypeDocx,
+    IconInnerShadowTop,
+    IconMailFilled,
+    IconSettingsCog, IconUserCog,
+} from "@tabler/icons-react"
 
 import {NavMain} from "@/components/nav-main"
 import {NavUser} from "@/components/nav-user"
@@ -19,14 +26,9 @@ import {SessionPayload} from "@/lib/session";
 const data = {
     navMain: [
         {
-            title: "Главная",
-            url: "/dashboard",
-            icon: IconDashboard,
-        },
-        {
             title: "Шаблоны",
             url: "/templates",
-            icon: IconFileFilled,
+            icon: IconFileTypeDocx,
         },
         {
             title: "Файлы",
@@ -41,9 +43,9 @@ const data = {
     ],
     navAdmin: [
         {
-            title: "Настройки",
-            url: "/settings",
-            icon: IconSettingsCog,
+            title: "Пользователи",
+            url: "/users",
+            icon: IconUserCog,
         }
     ]
 }
@@ -60,7 +62,7 @@ export function AppSidebar({user, ...props}: React.ComponentProps<typeof Sidebar
                             className="data-[slot=sidebar-menu-button]:!p-1.5"
                         >
                             <a href="/dashboard">
-                                <IconInnerShadowTop className="!size-5"/>
+                                <IconBrandMailgun className="!size-5"/>
                                 <span className="text-base font-semibold">Mass Sender</span>
                             </a>
                         </SidebarMenuButton>

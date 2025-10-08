@@ -1,5 +1,5 @@
 import {SiteHeader} from "@/components/site-header";
-import TemplatesTable from "@/app/(loggedIn)/templates/Table";
+import TemplatesTable from "@/app/(loggedIn)/templates/TemplatesTable";
 
 export default async function TemplatesPage() {
     return (

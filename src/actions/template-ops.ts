@@ -2,8 +2,8 @@
 
 import {uploadFormSchema} from '@/lib/schemas';
 import * as fs from "node:fs";
-// import {revalidatePath} from 'next/cache';
-// import {redirect} from 'next/navigation';
+import {addTemplate} from "@/lib/data/templates";
+import {TemplateForAdd} from "@/lib/data/definitions";
 
 export async function uploadDocument(formData: FormData) {
     console.log('[uploadDocument] start')
@@ -31,20 +31,11 @@ export async function uploadDocument(formData: FormData) {
     }
 
     try {
-        const {file: uploadedFile} = validatedData.data;
-
-        // Создаем FormData для загрузки файла
-        const uploadFormData = new FormData();
-        uploadFormData.append('document', uploadedFile);
-        uploadFormData.append('comment', comment);
-
-        console.log('[uploadedFile]', uploadedFile);
-
+        const {file: uploadedFile, comment: validatedComment} = validatedData.data;
         const rawBuffer = await uploadedFile.arrayBuffer();
-
         const buffer = new Uint8Array(rawBuffer);
-
-        const filePath = './upload/add.docx' ;
+        const filename = `template_${Date.now()}.docx`;
+        const filePath = `./upload/${filename}`;
         fs.writeFile(filePath, buffer, (err) => {
             if (err) {
                 console.error('Error writing binary file:', err);
@@ -52,6 +43,12 @@ export async function uploadDocument(formData: FormData) {
             }
             console.log(`Binary file saved successfully to: ${filePath}`);
         });
+
+        const payload: TemplateForAdd = {
+            filename,
+            comment: validatedComment,
+        }
+        await addTemplate(payload);
 
         return {
             success: true,
@@ -65,4 +62,15 @@ export async function uploadDocument(formData: FormData) {
             message: 'Ошибка при загрузке файла на сервер'
         };
     }
+}
+
+export async function removeTemplateFile(filename: string) {
+    const filePath = `./upload/${filename}`;
+    fs.unlink (filePath, (err) => {
+        if (err) {
+            console.error('Error deleting file:', err);
+            return;
+        }
+        console.log(`${filePath} deleted successfully`);
+    });
 }
