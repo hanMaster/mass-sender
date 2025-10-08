@@ -1,5 +1,17 @@
+export type Result = {
+    success: boolean,
+    error?: string,
+}
+
 export type User = {
     id: string;
+    name: string;
+    email: string;
+    role: string;
+    password: string;
+};
+
+export type UserForAdd = {
     name: string;
     email: string;
     role: string;

@@ -1,5 +1,6 @@
+'use server'
 import postgres from 'postgres';
-import {User} from "@/lib/data/definitions";
+import {Result, User, UserForAdd} from "@/lib/data/definitions";
 
 const sql = postgres(process.env.POSTGRES_URL!, {ssl: 'require'});
 
@@ -25,5 +26,21 @@ export async function fetchUser(email: string,): Promise<User | undefined> {
     } catch (error) {
         console.error('Database Error:', error);
         throw new Error('Failed to fetch user.');
+    }
+}
+
+export async function insertUser(user: UserForAdd): Promise<Result> {
+    try {
+        await sql`
+            INSERT INTO users (name, email, role, password)
+            VALUES (${user.name}, ${user.email}, ${user.role}, ${user.password});
+        `;
+        return {success: true};
+
+    } catch (error) {
+        console.error('Database Error:', error);
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
+        return {success: false, error: error.message};
     }
 }

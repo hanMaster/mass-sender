@@ -52,7 +52,6 @@ export default function DocumentUploadForm() {
     });
 
     const onSubmit = async (data: UploadFormData) => {
-        console.log('submit', data);
         const formData = new FormData();
         formData.append('file', data.file);
         formData.append('comment', data.comment);

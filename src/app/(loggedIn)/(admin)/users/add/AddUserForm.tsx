@@ -1,39 +1,46 @@
 "use client"
-import {toast} from "sonner"
 import {useForm} from "react-hook-form"
-import {zodResolver} from "@hookform/resolvers/zod"
-import {z} from "zod"
-import {Button} from "@/components/ui/button"
-import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage,} from "@/components/ui/form"
-import {Input} from "@/components/ui/input"
 import Link from "next/link";
+import {toast} from "sonner"
+import {z} from "zod"
+import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage,} from "@/components/ui/form"
+import {Button} from "@/components/ui/button"
+import {Input} from "@/components/ui/input"
+import {zodResolver} from "@hookform/resolvers/zod"
+import {addUser} from "@/actions/user.action";
+import {redirect} from "next/navigation";
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 
-const formSchema = z.object({
-    firstName: z.string().min(1, {error: 'Укажите имя'}),
-    lastName: z.string().min(1, {error: 'Укажите фамилию'}),
+const addUserSchema = z.object({
+    firstName: z.string({error: 'Укажите имя'}),
+    lastName: z.string({error: 'Укажите фамилию'}),
     email: z.email({error: 'Неверный формат email'}),
+    role: z.enum(['user', 'admin'], {error: 'Выберите роль для пользователя'}),
     password: z.string().min(6, {error: 'Длина пароля не менее 6 символов'})
 });
 
 export default function AddUserForm() {
 
-    const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
-
+    const form = useForm<z.infer<typeof addUserSchema>>({
+        resolver: zodResolver(addUserSchema),
     })
 
-    function onSubmit(values: z.infer<typeof formSchema>) {
-        try {
-            console.log(values);
-            toast(
-                <pre className="mt-2 w-[320px] rounded-md bg-slate-950 p-4">
-                  <code className="text-white">{JSON.stringify(values, null, 2)}</code>
-                </pre>
-            );
-        } catch (error) {
-            console.error("Form submission error", error);
-            toast.error("Failed to submit the form. Please try again.");
+    async function onSubmit(values: z.infer<typeof addUserSchema>) {
+        const formData = new FormData();
+        formData.append('firstName', values.firstName);
+        formData.append('lastName', values.lastName);
+        formData.append('email', values.email);
+        formData.append('role', values.role);
+        formData.append('password', values.password);
+
+        const result = await addUser(formData);
+        if (result.error) {
+            toast.error(result.error);
+            return;
         }
+        toast.success('Пользователь добавлен успешно!');
+        redirect('/users')
+
     }
 
     return (
@@ -94,6 +101,28 @@ export default function AddUserForm() {
                                     autoComplete="off"
                                     {...field} />
                             </FormControl>
+                            <FormMessage/>
+                        </FormItem>
+                    )}
+                />
+
+                <FormField
+                    control={form.control}
+                    name="role"
+                    render={({field}) => (
+                        <FormItem>
+                            <FormLabel>Роль</FormLabel>
+                            <Select onValueChange={field.onChange}>
+                                <FormControl>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Роль"/>
+                                    </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                    <SelectItem value="user">Пользователь</SelectItem>
+                                    <SelectItem value="admin">Администратор</SelectItem>
+                                </SelectContent>
+                            </Select>
                             <FormMessage/>
                         </FormItem>
                     )}
