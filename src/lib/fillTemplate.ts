@@ -8,7 +8,6 @@ import fs from 'fs';
 import path from 'path';
 
 export async function prepareFile() {
-
     // Load the docx file as binary content
     const templatePath = path.join(process.cwd(), 'templates', 'tpl_1759905729022.docx');
     console.log('filePath', templatePath);
