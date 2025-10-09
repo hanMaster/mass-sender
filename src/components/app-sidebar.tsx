@@ -24,8 +24,8 @@ const data = {
             icon: IconFileTypeDocx,
         },
         {
-            title: "Файлы",
-            url: "/files",
+            title: "Уведомления",
+            url: "/notifications",
             icon: IconFileFilled,
         },
         {

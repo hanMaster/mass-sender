@@ -29,3 +29,17 @@ export type TemplateForAdd = {
     filename: string;
     comment: string;
 };
+
+export type NotificationRecord = {
+    id: string;
+    filename: string;
+    filename_signed: string;
+    comment: string;
+    created_at: Date;
+    deleted_at: Date;
+}
+
+export type NotificationForAdd = {
+    filename: string;
+    comment: string;
+}

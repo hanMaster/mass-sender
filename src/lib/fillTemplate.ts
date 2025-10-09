@@ -30,11 +30,12 @@ export async function prepareFile() {
      * ...
      */
     doc.render({
+        house_number: 15,
         date: new Date().toLocaleDateString(),
     });
 
     const buf = doc.toBuffer();
-    const filePath = path.join(process.cwd(), 'output', 'output.docx');
+    const filePath = path.join(process.cwd(), 'public', 'files', 'уведомление_ЖК15.docx');
     // Write the Buffer to a file
     fs.writeFileSync(filePath, buf);
 }
