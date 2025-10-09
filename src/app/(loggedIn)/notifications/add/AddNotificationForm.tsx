@@ -13,8 +13,9 @@ import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover"
 import {Calendar} from "@/components/ui/calendar"
 import {Calendar as CalendarIcon} from "lucide-react"
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select"
-import {ru} from "date-fns/locale/ru";
 import Link from "next/link";
+import {ru} from "date-fns/locale/ru";
+import {TemplateForSelect} from "@/lib/data/definitions";
 
 const addNotificationSchema = z.object({
     houseNumber: z.string({error: 'Укажите номер дома'}),
@@ -23,7 +24,7 @@ const addNotificationSchema = z.object({
     template: z.string({error: 'Шаблон документа не выбран'})
 });
 
-export default function AddNotificationForm() {
+export default function AddNotificationForm({templates}: { templates: TemplateForSelect[] }) {
 
     const form = useForm<z.infer<typeof addNotificationSchema>>({
         resolver: zodResolver(addNotificationSchema),
@@ -121,6 +122,7 @@ export default function AddNotificationForm() {
                                         <Input
                                             placeholder="Описание уведомления"
                                             type="text"
+                                            autoComplete='off'
                                             {...field} />
                                     </FormControl>
                                     <FormMessage/>
@@ -144,9 +146,9 @@ export default function AddNotificationForm() {
                                             </SelectTrigger>
                                         </FormControl>
                                         <SelectContent className="w-[var(--radix-select-trigger-width)]">
-                                            <SelectItem value="m@example.com">m@example.com</SelectItem>
-                                            <SelectItem value="m@google.com">m@google.com</SelectItem>
-                                            <SelectItem value="m@support.com">m@support.com</SelectItem>
+                                            {templates.map(t => (
+                                                <SelectItem value={t.id} key={t.id}>{t.comment}</SelectItem>
+                                            ))}
                                         </SelectContent>
                                     </Select>
                                     <FormMessage/>

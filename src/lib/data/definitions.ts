@@ -30,6 +30,11 @@ export type TemplateForAdd = {
     comment: string;
 };
 
+export type TemplateForSelect = {
+    id: string;
+    comment: string;
+};
+
 export type NotificationRecord = {
     id: string;
     filename: string;
@@ -41,5 +46,10 @@ export type NotificationRecord = {
 
 export type NotificationForAdd = {
     filename: string;
+    comment: string;
+}
+
+export type NotificationForSelect = {
+    id: string;
     comment: string;
 }

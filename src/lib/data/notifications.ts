@@ -1,5 +1,5 @@
 import postgres from "postgres";
-import {NotificationForAdd, NotificationRecord} from "@/lib/data/definitions";
+import {NotificationForAdd, NotificationForSelect, NotificationRecord} from "@/lib/data/definitions";
 
 const sql = postgres(process.env.POSTGRES_URL!, {ssl: 'require'});
 
@@ -13,6 +13,11 @@ export async function fetchNotifications(): Promise<NotificationRecord[] | undef
         console.error('Database Error:', error);
         throw new Error('Failed to fetch notifications.');
     }
+}
+
+export async function fetchNotificationsForSelect(): Promise<NotificationForSelect[]> {
+    const data = await fetchNotifications();
+    return data ? data.map(r => ({id: r.id, comment: r.comment})) : []
 }
 
 export async function addNotification({filename, comment}: NotificationForAdd) {

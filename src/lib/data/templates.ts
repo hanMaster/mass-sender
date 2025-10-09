@@ -1,6 +1,6 @@
 'use server'
 import postgres from 'postgres';
-import {Template, TemplateForAdd} from "@/lib/data/definitions";
+import {Template, TemplateForAdd, TemplateForSelect} from "@/lib/data/definitions";
 import {revalidatePath} from "next/cache";
 import {removeTemplateFile} from "@/actions/template-ops";
 
@@ -16,6 +16,11 @@ export async function fetchTemplates(): Promise<Template[] | undefined> {
         console.error('Database Error:', error);
         throw new Error('Failed to fetch templates.');
     }
+}
+
+export async function fetchTemplateForSelect(): Promise<TemplateForSelect[]> {
+    const data = await fetchTemplates();
+    return data ? data.map(r => ({id: r.id, comment: r.comment})) : []
 }
 
 export async function addTemplate({filename, comment}: TemplateForAdd) {
