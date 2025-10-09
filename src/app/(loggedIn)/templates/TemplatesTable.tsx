@@ -1,5 +1,4 @@
 import Link from "next/link";
-import {Button} from "@/components/ui/button";
 import {IconPlus} from "@tabler/icons-react";
 import {fetchTemplates} from "@/lib/data/templates";
 import {DeleteButton} from "@/app/(loggedIn)/templates/DeleteButton";
@@ -10,12 +9,11 @@ export default async function TemplatesTable() {
 
     return (
         <>
-            <Button className='bg-primary hover:bg-primary/90 max-w-50'>
-                <Link href="/templates/add" className='flex items-center justify-center'>
-                    <IconPlus/>
-                    Добавить шаблон
-                </Link>
-            </Button>
+            <Link href='/templates/add'
+                  className='bg-primary hover:bg-primary/90 max-w-72 flex justify-center p-1 rounded-md text-white dark:text-primary-foreground font-medium'>
+                <IconPlus/>Добавить шаблон
+            </Link>
+
             <Table>
                 <TableHeader>
                     <TableRow>

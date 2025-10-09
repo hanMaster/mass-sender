@@ -1,22 +1,18 @@
 import Link from "next/link";
-import {Button} from "@/components/ui/button";
 import {IconPlus} from "@tabler/icons-react";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import {fetchUsers} from "@/lib/data/users";
 import {DeleteButton} from "@/app/(loggedIn)/(admin)/users/DeleteButton";
-
 
 export default async function UsersTable() {
     const data = await fetchUsers();
 
     return (
         <>
-            <Button className='bg-primary hover:bg-primary/90 max-w-50'>
-                <Link href="/users/add" className='flex items-center justify-center'>
-                    <IconPlus/>
-                    Добавить пользователя
-                </Link>
-            </Button>
+            <Link href='/users/add'
+                  className='bg-primary hover:bg-primary/90 max-w-72 flex justify-center p-1 rounded-md text-white dark:text-primary-foreground font-medium '>
+                <IconPlus/>Добавить пользователя
+            </Link>
             <Table>
                 <TableHeader>
                     <TableRow>

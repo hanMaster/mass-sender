@@ -1,21 +1,18 @@
-import Link from "next/link";
-import {Button} from "@/components/ui/button";
 import {IconEdit, IconPlus} from "@tabler/icons-react";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import {fetchNotifications} from "@/lib/data/notifications";
 import DownloadLink from "@/app/(loggedIn)/notifications/DownloadLink";
+import Link from "next/link";
 
 export default async function NotificationsTable() {
     const data = await fetchNotifications();
 
     return (
         <>
-            <Button className='bg-primary hover:bg-primary/90 max-w-50'>
-                <Link href="/notifications/add" className='flex items-center justify-center'>
-                    <IconPlus/>
-                    Создать
-                </Link>
-            </Button>
+            <Link href='/notifications/add'
+                  className='bg-primary hover:bg-primary/90 max-w-50 flex justify-center p-1 rounded-md text-white dark:text-primary-foreground font-medium '>
+                <IconPlus/>Создать
+            </Link>
             <Table>
                 <TableHeader>
                     <TableRow>
