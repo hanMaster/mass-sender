@@ -1,4 +1,4 @@
-import {IconEdit, IconPlus} from "@tabler/icons-react";
+import {IconCloud, IconCloudDownload, IconEdit, IconPlus, IconTrash} from "@tabler/icons-react";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import {fetchNotifications} from "@/lib/data/notifications";
 import Link from "next/link";
@@ -21,6 +21,7 @@ export default async function NotificationsTable() {
                         <TableHead>Согласованный файл</TableHead>
                         <TableHead>Дата создания</TableHead>
                         <TableHead className="w-[100px]"></TableHead>
+                        <TableHead className="w-[100px]"></TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -30,16 +31,20 @@ export default async function NotificationsTable() {
                             <TableCell className="font-medium">{index + 1}</TableCell>
                             <TableCell>{item.comment}</TableCell>
                             <TableCell>
-                                <Link href={`/notifications/${item.id}/get`}
-                                      className='link-button w-[100px]'>Скачать</Link>
+                                <Link href={`/notifications/${item.id}/start-file`}
+                                      className='link-button w-[100px] flex gap-2 items-center'><IconCloudDownload/>Скачать</Link>
                             </TableCell>
                             <TableCell>
-
+                                <Link href={`/notifications/${item.id}/approved-file`}
+                                      className='link-button w-[100px] flex gap-2 items-center'><IconCloudDownload/>Скачать</Link>
                             </TableCell>
                             <TableCell>{`${item.created_at.toLocaleDateString()} ${item.created_at.toLocaleTimeString()}`}</TableCell>
 
                             <TableCell className="text-right cursor-pointer">
-                                <IconEdit/>
+                                <IconEdit title="Изменить"/>
+                            </TableCell>
+                            <TableCell className="cursor-pointer ">
+                                <IconTrash title="Удалить" />
                             </TableCell>
                         </TableRow>
                     )}
