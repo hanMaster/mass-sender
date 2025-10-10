@@ -122,6 +122,6 @@
     }
 
     .link-button {
-        @apply flex gap-2 items-center bg-primary hover:bg-primary/90 max-w-50 flex justify-center p-2 rounded-md text-white dark:text-primary-foreground font-medium;
+        @apply flex gap-2 items-center bg-primary hover:bg-primary/90 max-w-50 justify-center p-2 rounded-md text-white dark:text-primary-foreground font-medium;
     }
 }

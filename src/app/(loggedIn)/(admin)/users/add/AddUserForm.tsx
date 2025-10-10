@@ -1,4 +1,5 @@
-"use client"
+"use client";
+
 import {useForm} from "react-hook-form"
 import Link from "next/link";
 import {toast} from "sonner"
@@ -35,7 +36,11 @@ export default function AddUserForm() {
 
         const result = await addUser(formData);
         if (result.error) {
-            toast.error(result.error);
+            if (result.error.includes('users_email_key')) {
+                toast.error('Такой email уже зарегистрирован!');
+            } else {
+                toast.error(result.error);
+            }
             return;
         }
         toast.success('Пользователь добавлен успешно!');
@@ -112,13 +117,13 @@ export default function AddUserForm() {
                     render={({field}) => (
                         <FormItem>
                             <FormLabel>Роль</FormLabel>
-                            <Select onValueChange={field.onChange}>
-                                <FormControl>
+                            <Select onValueChange={field.onChange} defaultValue='user'>
+                                <FormControl className='w-full'>
                                     <SelectTrigger>
                                         <SelectValue placeholder="Роль"/>
                                     </SelectTrigger>
                                 </FormControl>
-                                <SelectContent>
+                                <SelectContent className="w-[var(--radix-select-trigger-width)]">
                                     <SelectItem value="user">Пользователь</SelectItem>
                                     <SelectItem value="admin">Администратор</SelectItem>
                                 </SelectContent>

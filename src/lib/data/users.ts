@@ -1,4 +1,5 @@
-'use server'
+'use server';
+
 import postgres from 'postgres';
 import {Result, User, UserForAdd} from "@/lib/data/definitions";
 import {revalidatePath} from "next/cache";
@@ -49,6 +50,7 @@ export async function insertUser(user: UserForAdd): Promise<Result<void>> {
 }
 
 export async function removeUser(id: string): Promise<Result<void>> {
+    console.log('Remove user with id:', id);
     try {
         await sql`DELETE
                   FROM users

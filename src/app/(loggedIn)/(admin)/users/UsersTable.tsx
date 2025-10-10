@@ -12,11 +12,10 @@ export default async function UsersTable() {
 
     return (
         <>
-            <Link href='/users/add'
-                  className='bg-primary hover:bg-primary/90 max-w-72 flex justify-center p-1 rounded-md text-white dark:text-primary-foreground font-medium '>
-                <IconPlus/>Добавить пользователя
+            <Link href='/users/add' className='link-button'>
+                <IconPlus/>Создать
             </Link>
-            <Table>
+            <Table className='select-none'>
                 <TableHeader>
                     <TableRow>
                         <TableHead className="w-[100px]">№</TableHead>

@@ -4,10 +4,20 @@ import {removeTemplate} from "@/lib/data/templates";
 import {useActionState, useEffect} from "react";
 import {Result} from "@/lib/data/definitions";
 import {toast} from "sonner";
+import {
+    Dialog,
+    DialogClose,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger
+} from "@/components/ui/dialog";
 
 export function DeleteButton({id}: { id: string }) {
     const removeWithId = removeTemplate.bind(null, id);
-    const initialState: Result<unknown> = {
+    const initialState: Result<void> = {
         success: false,
     }
     const [state, formAction] = useActionState(removeWithId, initialState);
@@ -19,10 +29,28 @@ export function DeleteButton({id}: { id: string }) {
     }, [state]);
 
     return (
-        <form action={formAction}>
-            <Button className='bg-primary hover:bg-primary/80 cursor-pointer' type='submit'>
-                Удалить
-            </Button>
-        </form>
+        <Dialog>
+            <form action={formAction}>
+                <DialogTrigger asChild>
+                    <Button variant="outline" className='hover:bg-red-600 hover:text-white dark:hover:bg-red-600'>
+                        Удалить
+                    </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[425px]">
+                    <DialogHeader>
+                        <DialogTitle>Удаление!</DialogTitle>
+                        <DialogDescription>
+                            Подтвердите ваше намерение
+                        </DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter>
+                        <DialogClose asChild>
+                            <Button variant="outline">Отмена</Button>
+                        </DialogClose>
+                        <Button type="submit">Удалить</Button>
+                    </DialogFooter>
+                </DialogContent>
+            </form>
+        </Dialog>
     )
 }

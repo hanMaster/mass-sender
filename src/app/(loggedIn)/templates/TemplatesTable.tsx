@@ -13,7 +13,7 @@ export default async function TemplatesTable() {
         <>
             <Link href='/templates/add'
                   className='link-button'>
-                <IconPlus/>Добавить шаблон
+                <IconPlus/>Создать
             </Link>
 
             <Table>

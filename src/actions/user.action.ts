@@ -3,7 +3,7 @@ import bcrypt from "bcrypt";
 import {Result, UserForAdd} from "@/lib/data/definitions";
 import {insertUser} from "@/lib/data/users";
 
-export async function addUser(formData: FormData): Promise<Result<unknown>> {
+export async function addUser(formData: FormData): Promise<Result<void>> {
     const firstName = formData.get('firstName') as string;
     const lastName = formData.get('lastName') as string;
     const email = formData.get('email') as string;
