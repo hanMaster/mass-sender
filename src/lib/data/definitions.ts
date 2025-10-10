@@ -20,13 +20,13 @@ export type UserForAdd = {
 
 export type Template = {
     id: string;
-    filename: string;
+    file: string;
     comment: string;
     created_at: Date;
 };
 
 export type TemplateForAdd = {
-    filename: string;
+    file: Uint8Array;
     comment: string;
 };
 

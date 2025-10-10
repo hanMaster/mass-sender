@@ -10,7 +10,7 @@ export default async function TemplatesTable() {
     return (
         <>
             <Link href='/templates/add'
-                  className='bg-primary hover:bg-primary/90 max-w-72 flex justify-center p-1 rounded-md text-white dark:text-primary-foreground font-medium'>
+                  className='link-button'>
                 <IconPlus/>Добавить шаблон
             </Link>
 
@@ -19,6 +19,7 @@ export default async function TemplatesTable() {
                     <TableRow>
                         <TableHead className="w-[100px]">№</TableHead>
                         <TableHead>Описание шаблона</TableHead>
+                        <TableHead className="w-[100px]"></TableHead>
                         <TableHead className="w-[200px]">Дата загрузки</TableHead>
                         <TableHead className="w-[100px]"></TableHead>
                     </TableRow>
@@ -29,6 +30,9 @@ export default async function TemplatesTable() {
                         <TableRow key={item.id}>
                             <TableCell className="font-medium">{index + 1}</TableCell>
                             <TableCell>{item.comment}</TableCell>
+                            <TableCell>
+                                <Link href={`/templates/${item.id}/get`} className='link-button'>Скачать</Link>
+                            </TableCell>
                             <TableCell>{`${item.created_at.toLocaleDateString()} ${item.created_at.toLocaleTimeString()}`}</TableCell>
                             <TableCell className="text-right">
                                 <DeleteButton id={item.id}/>

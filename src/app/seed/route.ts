@@ -22,7 +22,7 @@ async function migrateTemplates() {
         CREATE TABLE IF NOT EXISTS templates
         (
             id         UUID                     DEFAULT uuid_generate_v4() PRIMARY KEY,
-            filename   VARCHAR(255) NOT NULL,
+            file       BYTEA        NOT NULL,
             comment    VARCHAR(100) NOT NULL,
             created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
             deleted_at TIMESTAMPTZ              DEFAULT NULL
@@ -57,7 +57,7 @@ export async function GET() {
         await sql.begin(() => [
             // migrateUsers(),
             // seedAdmin(),
-            // migrateTemplates(),
+            migrateTemplates(),
             // migrateNotifications()
         ]);
 

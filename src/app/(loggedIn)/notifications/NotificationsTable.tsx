@@ -10,7 +10,7 @@ export default async function NotificationsTable() {
     return (
         <>
             <Link href='/notifications/add'
-                  className='bg-primary hover:bg-primary/90 max-w-50 flex justify-center p-1 rounded-md text-white dark:text-primary-foreground font-medium '>
+                  className='link-button'>
                 <IconPlus/>Создать
             </Link>
             <Table>

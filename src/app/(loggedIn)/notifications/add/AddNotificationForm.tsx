@@ -20,14 +20,19 @@ import {TemplateForSelect} from "@/lib/data/definitions";
 const addNotificationSchema = z.object({
     houseNumber: z.string({error: 'Укажите номер дома'}),
     date: z.date({error: 'Укажите дату ввода дома в эксплуатацию'}),
-    comment: z.string({error: 'Добавьте описание уведомления'}),
-    template: z.string({error: 'Шаблон документа не выбран'})
+    templateId: z.string({error: 'Шаблон документа не выбран'}),
+    comment: z.string({error: 'Добавьте описание уведомления'})
 });
 
 export default function AddNotificationForm({templates}: { templates: TemplateForSelect[] }) {
 
     const form = useForm<z.infer<typeof addNotificationSchema>>({
         resolver: zodResolver(addNotificationSchema),
+        defaultValues: {
+            houseNumber: '1',
+            date: new Date(),
+            comment: 'Сообщение о завершении строительства и передаче объекта'
+        }
     })
 
     function onSubmit(values: z.infer<typeof addNotificationSchema>) {
@@ -46,7 +51,7 @@ export default function AddNotificationForm({templates}: { templates: TemplateFo
 
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 w-[700px] mx-auto py-10">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 w-[500px] mx-auto py-10">
                 <div className="grid grid-cols-12 gap-4">
                     <div className="col-span-6">
                         <FormField
@@ -109,54 +114,47 @@ export default function AddNotificationForm({templates}: { templates: TemplateFo
                     </div>
                 </div>
 
-                <div className="grid grid-cols-12 gap-4">
-                    <div className="col-span-6">
+                <FormField
+                    control={form.control}
+                    name="templateId"
+                    render={({field}) => (
+                        <FormItem>
+                            <FormLabel>Шаблон</FormLabel>
+                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                <FormControl className='w-full'>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Выберите шаблон"/>
+                                    </SelectTrigger>
+                                </FormControl>
+                                <SelectContent className="w-[var(--radix-select-trigger-width)]">
+                                    {templates.map(t => (
+                                        <SelectItem value={t.id} key={t.id}>{t.comment}</SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                            <FormMessage/>
+                        </FormItem>
+                    )}
+                />
 
-                        <FormField
-                            control={form.control}
-                            name="comment"
-                            render={({field}) => (
-                                <FormItem>
-                                    <FormLabel>Описание уведомления</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            placeholder="Описание уведомления"
-                                            type="text"
-                                            autoComplete='off'
-                                            {...field} />
-                                    </FormControl>
-                                    <FormMessage/>
-                                </FormItem>
-                            )}
-                        />
-                    </div>
+                <FormField
+                    control={form.control}
+                    name="comment"
+                    render={({field}) => (
+                        <FormItem>
+                            <FormLabel>Описание уведомления</FormLabel>
+                            <FormControl>
+                                <Input
+                                    placeholder="Описание уведомления"
+                                    type="text"
+                                    autoComplete='off'
+                                    {...field} />
+                            </FormControl>
+                            <FormMessage/>
+                        </FormItem>
+                    )}
+                />
 
-                    <div className="col-span-6">
-
-                        <FormField
-                            control={form.control}
-                            name="template"
-                            render={({field}) => (
-                                <FormItem>
-                                    <FormLabel>Шаблон</FormLabel>
-                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                        <FormControl className='w-full'>
-                                            <SelectTrigger>
-                                                <SelectValue placeholder="Выберите шаблон"/>
-                                            </SelectTrigger>
-                                        </FormControl>
-                                        <SelectContent className="w-[var(--radix-select-trigger-width)]">
-                                            {templates.map(t => (
-                                                <SelectItem value={t.id} key={t.id}>{t.comment}</SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                    <FormMessage/>
-                                </FormItem>
-                            )}
-                        />
-                    </div>
-                </div>
                 <div className="flex gap-4">
                     <Button className='bg-primary hover:bg-primary/80 cursor-pointer' type="submit">Сохранить</Button>
                     <Button variant='secondary' className='cursor-pointer' type="button">
