@@ -1,7 +1,6 @@
 import {IconEdit, IconPlus} from "@tabler/icons-react";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import {fetchNotifications} from "@/lib/data/notifications";
-import DownloadLink from "@/app/(loggedIn)/notifications/DownloadLink";
 import Link from "next/link";
 
 export default async function NotificationsTable() {
@@ -31,10 +30,11 @@ export default async function NotificationsTable() {
                             <TableCell className="font-medium">{index + 1}</TableCell>
                             <TableCell>{item.comment}</TableCell>
                             <TableCell>
-                                <DownloadLink filename={item.filename} downloadName={item.filename}/>
+                                <Link href={`/notifications/${item.id}/get`}
+                                      className='link-button w-[100px]'>Скачать</Link>
                             </TableCell>
                             <TableCell>
-                                <DownloadLink filename={item.filename} downloadName={item.filename}/>
+
                             </TableCell>
                             <TableCell>{`${item.created_at.toLocaleDateString()} ${item.created_at.toLocaleTimeString()}`}</TableCell>
 

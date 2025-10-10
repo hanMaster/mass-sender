@@ -19,7 +19,7 @@ export default async function TemplatesTable() {
                     <TableRow>
                         <TableHead className="w-[100px]">№</TableHead>
                         <TableHead>Описание шаблона</TableHead>
-                        <TableHead className="w-[100px]"></TableHead>
+                        <TableHead className="w-[200px]">Файл шаблона</TableHead>
                         <TableHead className="w-[200px]">Дата загрузки</TableHead>
                         <TableHead className="w-[100px]"></TableHead>
                     </TableRow>
@@ -31,7 +31,7 @@ export default async function TemplatesTable() {
                             <TableCell className="font-medium">{index + 1}</TableCell>
                             <TableCell>{item.comment}</TableCell>
                             <TableCell>
-                                <Link href={`/templates/${item.id}/get`} className='link-button'>Скачать</Link>
+                                <Link href={`/templates/${item.id}/get`} className='link-button w-[100px]'>Скачать</Link>
                             </TableCell>
                             <TableCell>{`${item.created_at.toLocaleDateString()} ${item.created_at.toLocaleTimeString()}`}</TableCell>
                             <TableCell className="text-right">

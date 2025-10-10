@@ -37,19 +37,27 @@ export type TemplateForSelect = {
 
 export type NotificationRecord = {
     id: string;
-    filename: string;
-    filename_signed: string;
+    start_file: string;
+    approved_file: string;
+    sig_file: string;
     comment: string;
     created_at: Date;
     deleted_at: Date;
 }
 
 export type NotificationForAdd = {
-    filename: string;
+    startFile: string;
     comment: string;
 }
 
 export type NotificationForSelect = {
     id: string;
+    comment: string;
+}
+
+export type NotificationPayload = {
+    houseNumber: string;
+    date: Date;
+    templateId: string;
     comment: string;
 }

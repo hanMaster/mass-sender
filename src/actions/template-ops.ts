@@ -5,7 +5,6 @@ import {addTemplate} from "@/lib/data/templates";
 import {TemplateForAdd} from "@/lib/data/definitions";
 
 export async function uploadDocument(formData: FormData) {
-    console.log('[uploadDocument] start')
     // Преобразуем FormData в объект для валидации
     const file = formData.get('file') as File;
     const comment = formData.get('comment') as string;

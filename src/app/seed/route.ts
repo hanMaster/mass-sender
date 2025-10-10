@@ -42,12 +42,13 @@ async function migrateNotifications() {
     await sql`
         CREATE TABLE IF NOT EXISTS notifications
         (
-            id              UUID                     DEFAULT uuid_generate_v4() PRIMARY KEY,
-            filename        VARCHAR(100) NOT NULL,
-            filename_signed VARCHAR(100)             DEFAULT NULL,
-            comment         VARCHAR(100) NOT NULL,
-            created_at      TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-            deleted_at      TIMESTAMPTZ              DEFAULT NULL
+            id            UUID                     DEFAULT uuid_generate_v4() PRIMARY KEY,
+            start_file    BYTEA        NOT NULL,
+            approved_file BYTEA                    DEFAULT NULL,
+            sig_file      BYTEA                    DEFAULT NULL,
+            comment       VARCHAR(100) NOT NULL,
+            created_at    TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+            deleted_at    TIMESTAMPTZ              DEFAULT NULL
         );
     `;
 }
@@ -57,7 +58,7 @@ export async function GET() {
         await sql.begin(() => [
             // migrateUsers(),
             // seedAdmin(),
-            migrateTemplates(),
+            // migrateTemplates(),
             // migrateNotifications()
         ]);
 

@@ -16,6 +16,8 @@ import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/c
 import Link from "next/link";
 import {ru} from "date-fns/locale/ru";
 import {TemplateForSelect} from "@/lib/data/definitions";
+import handleSubmitNotification from "@/actions/notification.action";
+import {redirect} from "next/navigation";
 
 const addNotificationSchema = z.object({
     houseNumber: z.string({error: 'Укажите номер дома'}),
@@ -32,17 +34,17 @@ export default function AddNotificationForm({templates}: { templates: TemplateFo
             houseNumber: '1',
             date: new Date(),
             comment: 'Сообщение о завершении строительства и передаче объекта'
-        }
+        },
     })
 
-    function onSubmit(values: z.infer<typeof addNotificationSchema>) {
+    async function onSubmit(values: z.infer<typeof addNotificationSchema>) {
         try {
-            console.log(values);
-            toast(
-                <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(values, null, 2)}</code>
-        </pre>
-            );
+            const result = await handleSubmitNotification(values);
+            if (result.success) {
+                form.reset();
+                toast.success('Уведомление создано успешно!');
+                redirect('/notifications');
+            }
         } catch (error) {
             console.error("Form submission error", error);
             toast.error("Failed to submit the form. Please try again.");

@@ -4,15 +4,16 @@
 import Docxtemplater from 'docxtemplater'
 // Load PizZip library to load the docx/pptx/xlsx file in memory
 import PizZip from "pizzip";
-import fs from 'fs';
-import path from 'path';
+import {NotificationPayload, Template} from "@/lib/data/definitions";
+import {decode} from "jose/base64url";
 
-export async function prepareFile() {
+export async function prepareFile(tpl: Template, p: NotificationPayload) {
     // Load the docx file as binary content
-    const templatePath = path.join(process.cwd(), 'templates', 'tpl_1759905729022.docx');
-    console.log('filePath', templatePath);
-    const content = fs.readFileSync(templatePath, "binary");
+    // const templatePath = path.join(process.cwd(), 'templates', 'tpl_1759905729022.docx');
+    // console.log('filePath', templatePath);
+    // const content = fs.readFileSync(templatePath, "binary");
 
+    const content = decode(tpl.file);
     // Unzip the content of the file
     const zip = new PizZip(content);
 
@@ -30,12 +31,9 @@ export async function prepareFile() {
      * ...
      */
     doc.render({
-        house_number: 15,
-        date: new Date().toLocaleDateString(),
+        house_number: p.houseNumber,
+        date: p.date.toLocaleDateString(),
     });
 
-    const buf = doc.toBuffer();
-    const filePath = path.join(process.cwd(), 'public', 'files', 'уведомление_ЖК15.docx');
-    // Write the Buffer to a file
-    fs.writeFileSync(filePath, buf);
+    return doc.toBase64();
 }
