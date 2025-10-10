@@ -1,46 +1,52 @@
 import postgres from "postgres";
-import {NotificationForAdd, NotificationForSelect, NotificationRecord} from "@/lib/data/definitions";
+import {NotificationForAdd, NotificationForSelect, NotificationRecord, Result} from "@/lib/data/definitions";
 
 const sql = postgres(process.env.POSTGRES_URL!, {ssl: 'require'});
 
-export async function fetchNotifications(): Promise<NotificationRecord[] | undefined> {
+export async function fetchNotifications(): Promise<Result<NotificationRecord[]>> {
     try {
-        return sql<NotificationRecord[]>`
+        const data = await sql<NotificationRecord[]>`
             SELECT *
             FROM notifications;
         `;
-    } catch (error) {
+        return {success: true, data};
+    } catch (error: any) {
         console.error('Database Error:', error);
-        throw new Error('Failed to fetch notifications.');
+        return {success: false, error: error.message};
     }
 }
 
-export async function fetchNotificationsForSelect(): Promise<NotificationForSelect[]> {
+export async function fetchNotificationsForSelect(): Promise<Result<NotificationForSelect[]>> {
     const data = await fetchNotifications();
-    return data ? data.map(r => ({id: r.id, comment: r.comment})) : []
+    if (!data.success) return data;
+    const selectList = data.data!.map(r => ({id: r.id, comment: r.comment}));
+    return {success: true, data: selectList};
 }
 
-export async function addNotification({startFile, comment}: NotificationForAdd) {
+export async function addNotification({startFile, comment}: NotificationForAdd): Promise<Result<void>> {
     try {
         await sql`
             INSERT INTO notifications (start_file, comment)
             VALUES (${startFile}, ${comment})
         `;
-    } catch {
-        throw new Error('Database Error: Failed to add notification.');
+        return {success: true};
+    } catch (error: any) {
+        console.log('Database Error: Failed to add notification.', error);
+        return {success: false, error: error.message};
     }
 }
 
-export async function fetchNotificationById(id: string): Promise<NotificationRecord | null> {
+export async function fetchNotificationById(id: string): Promise<Result<NotificationRecord>> {
     try {
         const rowList = await sql<NotificationRecord[]>`
             SELECT *
             FROM notifications
             WHERE id = ${id}`;
-        return rowList[0] ?? null;
+        if (!rowList[0]) return {success: false};
+        return {success: true, data: rowList[0]};
 
-    } catch (error) {
+    } catch (error: any) {
         console.log('Database Error:', error);
-        throw new Error('Database Error: Failed to fetch notification.');
+        return {success: false, error: error.message};
     }
 }

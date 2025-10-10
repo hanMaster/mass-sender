@@ -4,8 +4,10 @@ import {fetchNotifications} from "@/lib/data/notifications";
 import Link from "next/link";
 
 export default async function NotificationsTable() {
-    const data = await fetchNotifications();
-
+    const res = await fetchNotifications();
+    if (!res.success) {
+        return `Ошибка чтения данных: ${res.error}`;
+    }
     return (
         <>
             <Link href='/notifications/add' className='link-button'>
@@ -24,7 +26,7 @@ export default async function NotificationsTable() {
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {data?.map((item, index) =>
+                    {res.data!.map((item, index) =>
 
                         <TableRow key={item.id}>
                             <TableCell className="font-medium">{index + 1}</TableCell>
@@ -34,8 +36,10 @@ export default async function NotificationsTable() {
                                       className='link-button w-[100px]'><IconCloudDownload/>Скачать</Link>
                             </TableCell>
                             <TableCell>
-                                <Link href={`/notifications/${item.id}/approved-file`}
-                                      className='link-button w-[100px]'><IconCloudDownload/>Скачать</Link>
+                                {item.approved_file && (
+                                    <Link href={`/notifications/${item.id}/approved-file`}
+                                          className='link-button w-[100px]'><IconCloudDownload/>Скачать</Link>
+                                )}
                             </TableCell>
                             <TableCell>{`${item.created_at.toLocaleDateString()} ${item.created_at.toLocaleTimeString()}`}</TableCell>
 

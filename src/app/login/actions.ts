@@ -36,8 +36,8 @@ export async function login(prevState: State, formData: FormData) {
     }
 
     const {email, password} = result.data;
-    const user = await fetchUser(email);
-    if (!user) {
+    const res = await fetchUser(email);
+    if (!res.success) {
         return {
             errors: {
                 email: ["Некорректный email или пароль"],
@@ -45,7 +45,7 @@ export async function login(prevState: State, formData: FormData) {
         };
     }
 
-    const isEqual = await bcrypt.compare(password, user.password);
+    const isEqual = await bcrypt.compare(password, res.data!.password);
 
     if (!isEqual) {
         return {
@@ -55,7 +55,7 @@ export async function login(prevState: State, formData: FormData) {
         };
     }
 
-    await createSession(user);
+    await createSession(res.data!);
     redirect("/dashboard");
 }
 

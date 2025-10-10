@@ -5,7 +5,10 @@ import {fetchUsers} from "@/lib/data/users";
 import {DeleteButton} from "@/app/(loggedIn)/(admin)/users/DeleteButton";
 
 export default async function UsersTable() {
-    const data = await fetchUsers();
+    const res = await fetchUsers();
+    if (!res.success) {
+        return `Ошибка чтения данных: ${res.error}`;
+    }
 
     return (
         <>
@@ -23,7 +26,7 @@ export default async function UsersTable() {
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {data?.map((u, index) =>
+                    {res.data!.map((u, index) =>
 
                         <TableRow key={u.id}>
                             <TableCell className="font-medium">{index + 1}</TableCell>

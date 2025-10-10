@@ -26,7 +26,7 @@ export async function fetchTemplateForSelect(): Promise<Result<TemplateForSelect
     return res;
 }
 
-export async function addTemplate({file, comment}: TemplateForAdd): Promise<Result<unknown>> {
+export async function addTemplate({file, comment}: TemplateForAdd): Promise<Result<void>> {
     try {
         const encoded = encode(file);
         await sql`
@@ -39,7 +39,7 @@ export async function addTemplate({file, comment}: TemplateForAdd): Promise<Resu
     }
 }
 
-export async function removeTemplate(id: string): Promise<Result<unknown>> {
+export async function removeTemplate(id: string): Promise<Result<void>> {
     try {
         await sql`DELETE
                   FROM templates

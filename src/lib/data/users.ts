@@ -5,33 +5,36 @@ import {revalidatePath} from "next/cache";
 
 const sql = postgres(process.env.POSTGRES_URL!, {ssl: 'require'});
 
-export async function fetchUsers(): Promise<User[] | undefined> {
+export async function fetchUsers(): Promise<Result<User[]>> {
     try {
-        return await sql<User[]>`SELECT *
-                                 FROM users;`;
+        const data = await sql<User[]>`SELECT *
+                                       FROM users;`;
+        return {success: true, data};
 
-    } catch (error) {
+    } catch (error: any) {
         console.error('Database Error:', error);
-        throw new Error('Failed to fetch users.');
+        return {success: false, error: error.message};
     }
 }
 
-export async function fetchUser(email: string,): Promise<User | undefined> {
+export async function fetchUser(email: string,): Promise<Result<User>> {
     try {
-        const user = await sql<User[]>`
+        const rows = await sql<User[]>`
             SELECT *
             FROM users
             WHERE users.email = ${email.toLowerCase()};
         `;
-
-        return user[0];
-    } catch (error) {
+        if (!rows[0]) {
+            return {success: false, error: `Пользователь с почтой ${email} не найден`};
+        }
+        return {success: true, data: rows[0]}
+    } catch (error: any) {
         console.error('Database Error:', error);
-        throw new Error('Failed to fetch user.');
+        return {success: false, error: error.message};
     }
 }
 
-export async function insertUser(user: UserForAdd): Promise<Result<unknown>> {
+export async function insertUser(user: UserForAdd): Promise<Result<void>> {
     try {
         await sql`
             INSERT INTO users (name, email, role, password)
@@ -45,9 +48,15 @@ export async function insertUser(user: UserForAdd): Promise<Result<unknown>> {
     }
 }
 
-export async function removeUser(id: string) {
-    await sql`DELETE
-              FROM users
-              WHERE id = ${id}`;
-    revalidatePath('/users');
+export async function removeUser(id: string): Promise<Result<void>> {
+    try {
+        await sql`DELETE
+                  FROM users
+                  WHERE id = ${id}`;
+        revalidatePath('/users');
+        return {success: true};
+    } catch (error: any) {
+        console.error('Database Error:', error);
+        return {success: false, error: error.message};
+    }
 }

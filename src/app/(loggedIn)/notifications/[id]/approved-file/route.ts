@@ -13,13 +13,13 @@ export async function GET(req: Request, {params}: { params: Promise<{ id: string
 
     try {
         const notificationRecord = await fetchNotificationById(id);
-        if (!notificationRecord) {
+        if (!notificationRecord.success) {
             notFound();
         }
-        const buffer = decode(notificationRecord.approved_file);
+        const buffer = decode(notificationRecord.data!.approved_file);
         const arrBuffer = buffer as unknown as ArrayBuffer;
         const blob = new Blob([arrBuffer], {type: "application/octet-stream"});
-        const fileName = notificationRecord.comment;
+        const fileName = notificationRecord.data!.comment;
         const encodedFilename = encodeURIComponent(`${fileName} согласованный`);
         const contentDisposition = `attachment; filename="template.docx"; filename*=UTF-8''${encodedFilename}.docx`;
         return new Response(blob, {

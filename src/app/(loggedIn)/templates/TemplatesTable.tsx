@@ -5,8 +5,10 @@ import {DeleteButton} from "@/app/(loggedIn)/templates/DeleteButton";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 
 export default async function TemplatesTable() {
-    const data = await fetchTemplates();
-
+    const res = await fetchTemplates();
+    if (!res.success) {
+        return `Ошибка чтения данных: ${res.error}`;
+    }
     return (
         <>
             <Link href='/templates/add'
@@ -25,13 +27,14 @@ export default async function TemplatesTable() {
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {data.data?.map((item, index) =>
+                    {res.data!.map((item, index) =>
 
                         <TableRow key={item.id}>
                             <TableCell className="font-medium">{index + 1}</TableCell>
                             <TableCell>{item.comment}</TableCell>
                             <TableCell>
-                                <Link href={`/templates/${item.id}/get`} className='link-button w-[100px]'>Скачать</Link>
+                                <Link href={`/templates/${item.id}/get`}
+                                      className='link-button w-[100px]'>Скачать</Link>
                             </TableCell>
                             <TableCell>{`${item.created_at.toLocaleDateString()} ${item.created_at.toLocaleTimeString()}`}</TableCell>
                             <TableCell className="text-right">
