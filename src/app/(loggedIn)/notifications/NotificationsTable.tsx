@@ -1,4 +1,4 @@
-import {IconCloud, IconCloudDownload, IconEdit, IconPlus, IconTrash} from "@tabler/icons-react";
+import {IconCloudDownload, IconEdit, IconPlus, IconTrash} from "@tabler/icons-react";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import {fetchNotifications} from "@/lib/data/notifications";
 import Link from "next/link";
