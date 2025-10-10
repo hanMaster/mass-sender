@@ -31,7 +31,7 @@ export async function fetchUser(email: string,): Promise<User | undefined> {
     }
 }
 
-export async function insertUser(user: UserForAdd): Promise<Result> {
+export async function insertUser(user: UserForAdd): Promise<Result<unknown>> {
     try {
         await sql`
             INSERT INTO users (name, email, role, password)
@@ -39,10 +39,8 @@ export async function insertUser(user: UserForAdd): Promise<Result> {
         `;
         return {success: true};
 
-    } catch (error) {
+    } catch (error: any) {
         console.error('Database Error:', error);
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error
         return {success: false, error: error.message};
     }
 }

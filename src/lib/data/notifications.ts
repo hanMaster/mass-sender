@@ -1,5 +1,5 @@
 import postgres from "postgres";
-import {NotificationForAdd, NotificationForSelect, NotificationRecord, Template} from "@/lib/data/definitions";
+import {NotificationForAdd, NotificationForSelect, NotificationRecord} from "@/lib/data/definitions";
 
 const sql = postgres(process.env.POSTGRES_URL!, {ssl: 'require'});
 

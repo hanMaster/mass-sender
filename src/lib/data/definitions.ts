@@ -1,5 +1,6 @@
-export type Result = {
+export type Result<T> = {
     success: boolean,
+    data?: T,
     error?: string,
 }
 

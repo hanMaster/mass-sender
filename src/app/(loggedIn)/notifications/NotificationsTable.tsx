@@ -8,8 +8,7 @@ export default async function NotificationsTable() {
 
     return (
         <>
-            <Link href='/notifications/add'
-                  className='link-button'>
+            <Link href='/notifications/add' className='link-button'>
                 <IconPlus/>Создать
             </Link>
             <Table>
@@ -32,11 +31,11 @@ export default async function NotificationsTable() {
                             <TableCell>{item.comment}</TableCell>
                             <TableCell>
                                 <Link href={`/notifications/${item.id}/start-file`}
-                                      className='link-button w-[100px] flex gap-2 items-center'><IconCloudDownload/>Скачать</Link>
+                                      className='link-button w-[100px]'><IconCloudDownload/>Скачать</Link>
                             </TableCell>
                             <TableCell>
                                 <Link href={`/notifications/${item.id}/approved-file`}
-                                      className='link-button w-[100px] flex gap-2 items-center'><IconCloudDownload/>Скачать</Link>
+                                      className='link-button w-[100px]'><IconCloudDownload/>Скачать</Link>
                             </TableCell>
                             <TableCell>{`${item.created_at.toLocaleDateString()} ${item.created_at.toLocaleTimeString()}`}</TableCell>
 
@@ -44,7 +43,7 @@ export default async function NotificationsTable() {
                                 <IconEdit title="Изменить"/>
                             </TableCell>
                             <TableCell className="cursor-pointer ">
-                                <IconTrash title="Удалить" />
+                                <IconTrash title="Удалить"/>
                             </TableCell>
                         </TableRow>
                     )}

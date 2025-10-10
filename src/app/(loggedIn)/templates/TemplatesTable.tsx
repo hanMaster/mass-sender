@@ -25,7 +25,7 @@ export default async function TemplatesTable() {
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {data?.map((item, index) =>
+                    {data.data?.map((item, index) =>
 
                         <TableRow key={item.id}>
                             <TableCell className="font-medium">{index + 1}</TableCell>

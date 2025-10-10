@@ -15,7 +15,7 @@ import {Calendar as CalendarIcon} from "lucide-react"
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select"
 import Link from "next/link";
 import {ru} from "date-fns/locale/ru";
-import {TemplateForSelect} from "@/lib/data/definitions";
+import {Result, TemplateForSelect} from "@/lib/data/definitions";
 import handleSubmitNotification from "@/actions/notification.action";
 import {redirect} from "next/navigation";
 
@@ -26,8 +26,7 @@ const addNotificationSchema = z.object({
     comment: z.string({error: 'Добавьте описание уведомления'})
 });
 
-export default function AddNotificationForm({templates}: { templates: TemplateForSelect[] }) {
-
+export default function AddNotificationForm({templates}: { templates: Result<TemplateForSelect[]> }) {
     const form = useForm<z.infer<typeof addNotificationSchema>>({
         resolver: zodResolver(addNotificationSchema),
         defaultValues: {
@@ -36,6 +35,12 @@ export default function AddNotificationForm({templates}: { templates: TemplateFo
             comment: 'Сообщение о завершении строительства и передаче объекта'
         },
     })
+
+    if (!templates.success) {
+        toast.error(templates.error);
+        redirect('/notifications');
+    }
+    const templatesList = templates.data!;
 
     async function onSubmit(values: z.infer<typeof addNotificationSchema>) {
         const result = await handleSubmitNotification(values);
@@ -124,7 +129,7 @@ export default function AddNotificationForm({templates}: { templates: TemplateFo
                                     </SelectTrigger>
                                 </FormControl>
                                 <SelectContent className="w-[var(--radix-select-trigger-width)]">
-                                    {templates.map(t => (
+                                    {templatesList.map(t => (
                                         <SelectItem value={t.id} key={t.id}>{t.comment}</SelectItem>
                                     ))}
                                 </SelectContent>
