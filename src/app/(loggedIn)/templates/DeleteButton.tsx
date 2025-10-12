@@ -31,7 +31,8 @@ export function DeleteButton({id}: { id: string }) {
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <Button variant="outline" className='hover:bg-red-600 hover:text-white dark:hover:bg-red-600'>
+                <Button variant="outline"
+                        className='hover:bg-red-600 hover:text-white dark:hover:bg-red-600 cursor-pointer'>
                     Удалить
                 </Button>
             </DialogTrigger>
@@ -45,9 +46,9 @@ export function DeleteButton({id}: { id: string }) {
                     </DialogHeader>
                     <DialogFooter>
                         <DialogClose asChild>
-                            <Button variant="outline">Отмена</Button>
+                            <Button variant="outline" className='cursor-pointer'>Отмена</Button>
                         </DialogClose>
-                        <Button type="submit">Удалить</Button>
+                        <Button type="submit" className='cursor-pointer'>Удалить</Button>
                     </DialogFooter>
                 </form>
             </DialogContent>

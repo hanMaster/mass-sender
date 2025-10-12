@@ -32,7 +32,7 @@ export function DeleteButton({id}: { id: string }) {
         <Dialog>
             <DialogTrigger asChild>
                 <Button variant="outline"
-                        className='hover:bg-red-600 hover:text-white dark:hover:bg-red-600'>
+                        className='hover:bg-red-600 hover:text-white dark:hover:bg-red-600 cursor-pointer'>
                     Удалить
                 </Button>
             </DialogTrigger>
