@@ -1,5 +1,8 @@
+'use server';
+
 import postgres from "postgres";
 import {NotificationForAdd, NotificationForSelect, NotificationRecord, Result} from "@/lib/data/definitions";
+import {revalidatePath} from "next/cache";
 
 const sql = postgres(process.env.POSTGRES_URL!, {ssl: 'require'});
 
@@ -48,5 +51,17 @@ export async function fetchNotificationById(id: string): Promise<Result<Notifica
     } catch (error: any) {
         console.log('Database Error:', error);
         return {success: false, error: error.message};
+    }
+}
+
+export async function removeNotification(id: string): Promise<Result<void>> {
+    try {
+        await sql`DELETE
+                  FROM notifications
+                  WHERE id = ${id}`;
+        revalidatePath('/notifications');
+        return {success: true};
+    } catch {
+        return {success: false, error: 'Failed to remove notification.'};
     }
 }

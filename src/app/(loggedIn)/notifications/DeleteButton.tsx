@@ -1,8 +1,8 @@
 'use client'
+
 import {Button} from "@/components/ui/button";
-import {removeTemplate} from "@/lib/data/templates";
 import {useActionState, useEffect} from "react";
-import {Result} from "@/lib/data/definitions";
+import {NotificationRecord, Result} from "@/lib/data/definitions";
 import {toast} from "sonner";
 import {
     Dialog,
@@ -14,9 +14,10 @@ import {
     DialogTitle,
     DialogTrigger
 } from "@/components/ui/dialog";
+import {removeNotification} from "@/lib/data/notifications";
 
 export function DeleteButton({id, comment}: { id: string; comment: string }) {
-    const removeWithId = removeTemplate.bind(null, id);
+    const removeWithId = removeNotification.bind(null, id);
     const initialState: Result<void> = {
         success: false,
     }
@@ -39,11 +40,11 @@ export function DeleteButton({id, comment}: { id: string; comment: string }) {
             <DialogContent className="sm:max-w-[425px]">
                 <form action={formAction}>
                     <DialogHeader>
-                        <DialogTitle>Удаление шаблона!</DialogTitle>
-                        <DialogDescription className='mb-5'>
+                        <DialogTitle>Удаление уведомления!</DialogTitle>
+                        <DialogDescription className="mb-5">
                             <p>Подтвердите ваше намерение удалить</p>
                             <strong>
-                                {`шаблон "${comment}"`}
+                                {`уведомление "${comment}"`}
                             </strong>
                         </DialogDescription>
                     </DialogHeader>

@@ -34,7 +34,7 @@ export default async function UsersTable() {
                             <TableCell>{u.role === 'user' ? 'Пользователь' : 'Администратор'}</TableCell>
 
                             <TableCell className="text-right">
-                                <DeleteButton id={u.id}/>
+                                <DeleteButton id={u.id} name={u.name}/>
                             </TableCell>
                         </TableRow>
                     )}

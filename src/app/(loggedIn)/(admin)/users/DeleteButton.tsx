@@ -16,7 +16,7 @@ import {Result} from "@/lib/data/definitions";
 import {useActionState, useEffect} from "react";
 import {toast} from "sonner";
 
-export function DeleteButton({id}: { id: string }) {
+export function DeleteButton({id, name}: { id: string; name: string }) {
     const removeWithId = removeUser.bind(null, id);
     const initialState: Result<void> = {
         success: false,
@@ -40,8 +40,11 @@ export function DeleteButton({id}: { id: string }) {
                 <form action={formAction}>
                     <DialogHeader>
                         <DialogTitle>Удаление пользователя!</DialogTitle>
-                        <DialogDescription>
-                            Подтвердите ваше намерение
+                        <DialogDescription className='mb-5'>
+                            <p>Подтвердите ваше намерение удалить</p>
+                            <strong>
+                                {`пользователя "${name}"`}
+                            </strong>
                         </DialogDescription>
                     </DialogHeader>
                     <DialogFooter>

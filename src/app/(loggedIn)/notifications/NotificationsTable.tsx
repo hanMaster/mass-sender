@@ -1,7 +1,8 @@
-import {IconCloudDownload, IconEdit, IconPlus, IconTrash} from "@tabler/icons-react";
+import {IconCloudDownload, IconEdit, IconPlus} from "@tabler/icons-react";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import {fetchNotifications} from "@/lib/data/notifications";
 import Link from "next/link";
+import {DeleteButton} from "@/app/(loggedIn)/notifications/DeleteButton";
 
 export default async function NotificationsTable() {
     const res = await fetchNotifications();
@@ -46,8 +47,8 @@ export default async function NotificationsTable() {
                             <TableCell className="text-right cursor-pointer">
                                 <IconEdit title="Изменить"/>
                             </TableCell>
-                            <TableCell className="cursor-pointer ">
-                                <IconTrash title="Удалить"/>
+                            <TableCell>
+                                <DeleteButton id={item.id} comment={item.comment}/>
                             </TableCell>
                         </TableRow>
                     )}

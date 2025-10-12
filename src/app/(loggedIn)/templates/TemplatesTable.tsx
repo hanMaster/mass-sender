@@ -38,7 +38,7 @@ export default async function TemplatesTable() {
                             </TableCell>
                             <TableCell>{`${item.created_at.toLocaleDateString()} ${item.created_at.toLocaleTimeString()}`}</TableCell>
                             <TableCell className="text-right">
-                                <DeleteButton id={item.id}/>
+                                <DeleteButton id={item.id} comment={item.comment}/>
                             </TableCell>
                         </TableRow>
                     )}
