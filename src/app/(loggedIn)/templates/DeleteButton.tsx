@@ -30,13 +30,13 @@ export function DeleteButton({id}: { id: string }) {
 
     return (
         <Dialog>
-            <form action={formAction}>
-                <DialogTrigger asChild>
-                    <Button variant="outline" className='hover:bg-red-600 hover:text-white dark:hover:bg-red-600'>
-                        Удалить
-                    </Button>
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-[425px]">
+            <DialogTrigger asChild>
+                <Button variant="outline" className='hover:bg-red-600 hover:text-white dark:hover:bg-red-600'>
+                    Удалить
+                </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+                <form action={formAction}>
                     <DialogHeader>
                         <DialogTitle>Удаление!</DialogTitle>
                         <DialogDescription>
@@ -49,8 +49,8 @@ export function DeleteButton({id}: { id: string }) {
                         </DialogClose>
                         <Button type="submit">Удалить</Button>
                     </DialogFooter>
-                </DialogContent>
-            </form>
+                </form>
+            </DialogContent>
         </Dialog>
     )
 }
