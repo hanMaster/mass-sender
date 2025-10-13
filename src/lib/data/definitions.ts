@@ -69,3 +69,14 @@ export type NotificationApprovedPayload = {
     sigFile: Uint8Array;
     comment: string;
 };
+
+export type MailingRecord = {
+    id: string;
+    project: string;
+    house_number: string;
+    notification_id: string;
+    mail_list_id: string;
+    is_mail_sent: boolean;
+    created_at: Date;
+    deleted_at: Date;
+}

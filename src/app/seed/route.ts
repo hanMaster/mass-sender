@@ -53,13 +53,52 @@ async function migrateNotifications() {
     `;
 }
 
+async function migrateMailings() {
+    await sql`
+        CREATE TABLE IF NOT EXISTS mailings
+        (
+            id              UUID                     DEFAULT uuid_generate_v4() PRIMARY KEY,
+            project         VARCHAR(20) NOT NULL,
+            house_number    VARCHAR(10) NOT NULL,
+            notification_id UUID        NOT NULL,
+            is_mail_sent    BOOLEAN                  DEFAULT FALSE,
+            created_at      TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+            deleted_at      TIMESTAMPTZ              DEFAULT NULL
+        );
+    `;
+}
+
+async function migrateMailList() {
+    await sql`
+        CREATE TABLE IF NOT EXISTS mail_list
+        (
+            id              UUID                     DEFAULT uuid_generate_v4() PRIMARY KEY,
+            mailing_id      UUID         NOT NULL,
+            project         VARCHAR(20)  NOT NULL,
+            funnel          VARCHAR(40)  NOT NULL,
+            house_number    VARCHAR(10)  NOT NULL,
+            deal_id         VARCHAR(10)  NOT NULL,
+            object_type     VARCHAR(10)  NOT NULL,
+            object_number   VARCHAR(10)  NOT NULL,
+            is_main_contact BOOLEAN                  DEFAULT FALSE,
+            full_name       VARCHAR(100) NOT NULL,
+            phone           VARCHAR(11)  NOT NULL,
+            email           VARCHAR(30)  NOT NULL,
+            created_at      TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+            deleted_at      TIMESTAMPTZ              DEFAULT NULL
+        );
+    `;
+}
+
 export async function GET() {
     try {
         await sql.begin(() => [
             // migrateUsers(),
             // seedAdmin(),
             // migrateTemplates(),
-            // migrateNotifications()
+            // migrateNotifications(),
+            migrateMailings(),
+            migrateMailList()
         ]);
 
         return Response.json({message: 'Database seeded successfully'});
