@@ -14,6 +14,7 @@ import {
     DialogTitle,
     DialogTrigger
 } from "@/components/ui/dialog";
+import {IconTrash} from "@tabler/icons-react";
 
 export function DeleteButton({id, comment}: { id: string; comment: string }) {
     const removeWithId = removeTemplate.bind(null, id);
@@ -33,6 +34,7 @@ export function DeleteButton({id, comment}: { id: string; comment: string }) {
             <DialogTrigger asChild>
                 <Button variant="outline"
                         className='hover:bg-red-600 hover:text-white dark:hover:bg-red-600 cursor-pointer'>
+                    <IconTrash/>
                     Удалить
                 </Button>
             </DialogTrigger>
@@ -41,7 +43,7 @@ export function DeleteButton({id, comment}: { id: string; comment: string }) {
                     <DialogHeader>
                         <DialogTitle>Удаление шаблона!</DialogTitle>
                         <DialogDescription className='mb-5'>
-                            <p>Подтвердите ваше намерение удалить</p>
+                            <span className='block'>Подтвердите ваше намерение удалить</span>
                             <strong>
                                 {`шаблон "${comment}"`}
                             </strong>
@@ -51,7 +53,7 @@ export function DeleteButton({id, comment}: { id: string; comment: string }) {
                         <DialogClose asChild>
                             <Button variant="outline" className='cursor-pointer'>Отмена</Button>
                         </DialogClose>
-                        <Button type="submit" className='cursor-pointer'>Удалить</Button>
+                        <Button type="submit" className='cursor-pointer'><IconTrash/>Удалить</Button>
                     </DialogFooter>
                 </form>
             </DialogContent>

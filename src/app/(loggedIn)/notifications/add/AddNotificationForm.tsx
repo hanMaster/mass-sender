@@ -20,10 +20,10 @@ import handleSubmitNotification from "@/actions/notification.action";
 import {redirect} from "next/navigation";
 
 const addNotificationSchema = z.object({
-    houseNumber: z.string({error: 'Укажите номер дома'}),
+    houseNumber: z.string().min(1, {error: 'Укажите номер дома'}),
     date: z.date({error: 'Укажите дату ввода дома в эксплуатацию'}),
     templateId: z.string({error: 'Шаблон документа не выбран'}),
-    comment: z.string({error: 'Добавьте описание уведомления'})
+    comment: z.string().min(1, {error: 'Добавьте описание уведомления'})
 });
 
 export default function AddNotificationForm({templates}: { templates: Result<TemplateForSelect[]> }) {
@@ -159,8 +159,8 @@ export default function AddNotificationForm({templates}: { templates: Result<Tem
 
                 <div className="flex gap-4">
                     <Button className='bg-primary hover:bg-primary/80 cursor-pointer' type="submit">Сохранить</Button>
-                    <Button variant='secondary' className='cursor-pointer' type="button">
-                        <Link href='/notifications'>Отмена</Link>
+                    <Button variant='outline' type="button">
+                        <Link href='/notifications' className='cursor-pointer'>Отмена</Link>
                     </Button>
                 </div>
             </form>

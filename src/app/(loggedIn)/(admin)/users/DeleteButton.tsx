@@ -15,6 +15,7 @@ import {
 import {Result} from "@/lib/data/definitions";
 import {useActionState, useEffect} from "react";
 import {toast} from "sonner";
+import {IconTrash} from "@tabler/icons-react";
 
 export function DeleteButton({id, name}: { id: string; name: string }) {
     const removeWithId = removeUser.bind(null, id);
@@ -33,6 +34,7 @@ export function DeleteButton({id, name}: { id: string; name: string }) {
             <DialogTrigger asChild>
                 <Button variant="outline"
                         className='hover:bg-red-600 hover:text-white dark:hover:bg-red-600 cursor-pointer'>
+                    <IconTrash/>
                     Удалить
                 </Button>
             </DialogTrigger>
@@ -41,7 +43,7 @@ export function DeleteButton({id, name}: { id: string; name: string }) {
                     <DialogHeader>
                         <DialogTitle>Удаление пользователя!</DialogTitle>
                         <DialogDescription className='mb-5'>
-                            <p>Подтвердите ваше намерение удалить</p>
+                            <span className='block'>Подтвердите ваше намерение удалить</span>
                             <strong>
                                 {`пользователя "${name}"`}
                             </strong>
@@ -51,7 +53,7 @@ export function DeleteButton({id, name}: { id: string; name: string }) {
                         <DialogClose asChild>
                             <Button variant="outline" className='cursor-pointer'>Отмена</Button>
                         </DialogClose>
-                        <Button type="submit" className='cursor-pointer'>Удалить</Button>
+                        <Button type="submit" className='cursor-pointer'><IconTrash/>Удалить</Button>
                     </DialogFooter>
                 </form>
             </DialogContent>
