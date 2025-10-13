@@ -36,12 +36,7 @@ export default function DocumentUploadForm() {
         }
     }, [setValue]);
 
-    const {
-        getRootProps,
-        getInputProps,
-        isDragActive,
-        isDragReject
-    } = useDropzone({
+    const {getRootProps, getInputProps, isDragActive, isDragReject} = useDropzone({
         onDrop,
         accept: {
             'application/vnd.openxmlformats-officedocument.wordprocessingml.document': ['.docx'],

@@ -1,6 +1,6 @@
 'use server';
 
-import {uploadFormSchema} from '@/lib/schemas';
+import {uploadFormSchema, uploadNotificationSchema} from '@/lib/schemas';
 import {addTemplate} from "@/lib/data/templates";
 import {TemplateForAdd} from "@/lib/data/definitions";
 
@@ -45,6 +45,30 @@ export async function uploadDocument(formData: FormData) {
         return {
             success: false,
             message: 'Ошибка при загрузке файла на сервер'
+        };
+    }
+}
+
+export async function uploadApprovedFile(formData: FormData) {
+
+    // Преобразуем FormData в объект для валидации
+    const id = formData.get('id') as string;
+    const approvedFile = formData.get('approvedFile') as File;
+    const sigFile = formData.get('sigFile') as File;
+    const comment = formData.get('comment') as string;
+    const rawData = {id, approvedFile, sigFile, comment};
+
+    // Валидация данных
+    const validatedData = uploadNotificationSchema.safeParse(rawData);
+
+    if (!validatedData.success) {
+
+        console.log('[validatedData]', validatedData.error)
+
+        return {
+            success: false,
+            errors: validatedData.error.issues.map(m => m.message),
+            message: 'Ошибка валидации данных'
         };
     }
 }
