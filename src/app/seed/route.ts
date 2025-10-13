@@ -97,8 +97,8 @@ export async function GET() {
             // seedAdmin(),
             // migrateTemplates(),
             // migrateNotifications(),
-            migrateMailings(),
-            migrateMailList()
+            // migrateMailings(),
+            // migrateMailList()
         ]);
 
         return Response.json({message: 'Database seeded successfully'});

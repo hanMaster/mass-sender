@@ -59,7 +59,7 @@ export const sigSchema = z.instanceof(File)
     });
 
 export const uploadNotificationSchema = z.object({
-    id: z.string().min(1, {error: 'Укажите id записи'}),
+    id: z.string().min(1, {error: 'Укажите [id] записи'}),
     approvedFile: pdfSchema,
     sigFile: sigSchema,
     comment: z.string()

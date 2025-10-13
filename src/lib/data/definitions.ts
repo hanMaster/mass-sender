@@ -75,8 +75,40 @@ export type MailingRecord = {
     project: string;
     house_number: string;
     notification_id: string;
-    mail_list_id: string;
     is_mail_sent: boolean;
+    created_at: Date;
+    deleted_at: Date;
+}
+
+export type Mailings = {
+    id: string;
+    project: string;
+    house_number: string;
+    notification_comment: string;
+    is_mail_sent: boolean;
+    created_at: Date;
+    deleted_at: Date;
+}
+
+export type MailingForAdd = {
+    project: string;
+    houseNumber: string;
+    notificationId: string;
+}
+
+export type MailListRecord = {
+    id: string;
+    mailing_id: string;
+    project: string;
+    funnel: string;
+    house_number: string;
+    deal_id: string;
+    object_type: string;
+    object_number: string;
+    is_main_contact: boolean;
+    full_name: string;
+    phone: string;
+    email: string;
     created_at: Date;
     deleted_at: Date;
 }

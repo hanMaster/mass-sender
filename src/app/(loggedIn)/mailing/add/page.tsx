@@ -1,5 +1,21 @@
-export default function AddMailingPage() {
+import AddMailingForm from "@/app/(loggedIn)/mailing/add/AddMailingForm";
+import {SiteHeader} from "@/components/site-header";
+import {fetchNotificationsForSelect} from "@/lib/data/notifications";
+
+export default async function AddMailingPage() {
+    const notifications = await fetchNotificationsForSelect();
+
     return (
-        <h1>Add mailing</h1>
+        <>
+            <SiteHeader title={"Создание новой рассылки"}/>
+            <div className="flex flex-1 flex-col">
+                <div className="@container/main flex flex-1 flex-col gap-2">
+                    <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
+                        <AddMailingForm notifications={notifications}/>
+                    </div>
+                </div>
+            </div>
+        </>
+
     )
 }

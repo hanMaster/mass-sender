@@ -44,6 +44,9 @@ export default function AddNotificationForm({templates}: { templates: Result<Tem
 
     async function onSubmit(values: z.infer<typeof addNotificationSchema>) {
         const result = await handleSubmitNotification(values);
+        if (!result.success && result.error) {
+            return toast.error(result.error);
+        }
         if (result.success) {
             form.reset();
             toast.success('Уведомление создано успешно!');

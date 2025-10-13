@@ -36,13 +36,17 @@ export default async function MailingTable() {
                             <TableCell className="font-medium">{index + 1}</TableCell>
                             <TableCell>{item.project}</TableCell>
                             <TableCell>{item.house_number}</TableCell>
-                            <TableCell>Уведомление о сдаче дома 15</TableCell>
+                            <TableCell>{item.notification_comment}</TableCell>
                             <TableCell>{`${item.created_at.toLocaleDateString()} ${item.created_at.toLocaleTimeString()}`}</TableCell>
-                            <TableCell><Badge variant='destructive'>Нет</Badge></TableCell>
+                            <TableCell>
+                                <Badge variant={item.is_mail_sent ? 'default' : 'destructive'}>
+                                    {item.is_mail_sent ? 'Да' : 'Нет'}
+                                </Badge>
+                            </TableCell>
 
                             <TableCell className="text-right cursor-pointer">
                                 <Button variant='outline' className='hover:bg-green-300'>
-                                    <Link href={`/notifications/${item.id}/edit`} className='flex gap-1'>
+                                    <Link href={`/mailing/${item.id}`} className='flex gap-1'>
                                         <IconEdit title="Изменить"/>
                                         Изменить
                                     </Link>

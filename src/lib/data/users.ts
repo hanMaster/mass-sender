@@ -50,7 +50,7 @@ export async function insertUser(user: UserForAdd): Promise<Result<void>> {
 }
 
 export async function removeUser(id: string): Promise<Result<void>> {
-    console.log('Remove user with id:', id);
+    console.log('Remove user with [id]:', id);
     try {
         await sql`DELETE
                   FROM users

@@ -14,11 +14,11 @@ import {
     DialogTitle,
     DialogTrigger
 } from "@/components/ui/dialog";
-import {removeNotification} from "@/lib/data/notifications";
 import {IconTrash} from "@tabler/icons-react";
+import {removeMailing} from "@/lib/data/mailings";
 
 export function DeleteButton({id, comment}: { id: string; comment: string }) {
-    const removeWithId = removeNotification.bind(null, id);
+    const removeWithId = removeMailing.bind(null, id);
     const initialState: Result<void> = {
         success: false,
     }
