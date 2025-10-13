@@ -11,9 +11,10 @@ import {FileInput, FileUploader, FileUploaderContent, FileUploaderItem} from "@/
 import {Input} from "@/components/ui/input";
 import Link from "next/link";
 import {uploadApprovedFile} from "@/actions/template-ops";
+import {redirect} from "next/navigation";
 
 const formSchema = z.object({
-    files: z.array(z.instanceof(File)).refine((files) => files.length == 2, {
+    files: z.array(z.instanceof(File), {error: 'Выберите файлы'}).refine((files) => files.length == 2, {
         message: 'Должно быть загружено 2 файла, уведомление и sig-файл'
     }),
     comment: z.string().min(1, {error: 'Описание обязательно к заполнению'})
@@ -38,23 +39,21 @@ export default function EditNotificationForm({id, comment}: { id: string; commen
     });
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
-        try {
-            const formData = new FormData();
-            formData.append("id", id);
-            if (values.files[0].name.toLowerCase().endsWith(".pdf")) {
-                formData.append("approvedFile", values.files[0]);
-                formData.append("sigFile", values.files[1]);
-            } else {
-                formData.append("sigFile", values.files[0]);
-                formData.append("approvedFile", values.files[1]);
-            }
-            formData.append("comment", comment);
-            const res = await uploadApprovedFile(formData);
-            console.log(res)
-        } catch (error) {
-            console.error("Form submission error", error);
-            toast.error("Failed to submit the form. Please try again.");
+        const formData = new FormData();
+        formData.append("id", id);
+        if (values.files[0].name.toLowerCase().endsWith(".pdf")) {
+            formData.append("approvedFile", values.files[0]);
+            formData.append("sigFile", values.files[1]);
+        } else {
+            formData.append("sigFile", values.files[0]);
+            formData.append("approvedFile", values.files[1]);
         }
+        formData.append("comment", values.comment);
+        const res = await uploadApprovedFile(formData);
+        if (!res.success && res.message) {
+            return toast.error(res.message);
+        }
+        redirect('/notifications');
     }
 
     function displayFiles() {

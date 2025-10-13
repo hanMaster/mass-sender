@@ -2,7 +2,8 @@
 
 import {uploadFormSchema, uploadNotificationSchema} from '@/lib/schemas';
 import {addTemplate} from "@/lib/data/templates";
-import {TemplateForAdd} from "@/lib/data/definitions";
+import {NotificationApprovedPayload, TemplateForAdd} from "@/lib/data/definitions";
+import {addApprovedFiles} from "@/lib/data/notifications";
 
 export async function uploadDocument(formData: FormData) {
     // Преобразуем FormData в объект для валидации
@@ -69,6 +70,30 @@ export async function uploadApprovedFile(formData: FormData) {
             success: false,
             errors: validatedData.error.issues.map(m => m.message),
             message: 'Ошибка валидации данных'
+        };
+    }
+
+    try {
+        const {id, approvedFile, sigFile, comment: validatedComment} = validatedData.data;
+        const rawBufferPdf = await approvedFile.arrayBuffer();
+        const bufferPdf = new Uint8Array(rawBufferPdf);
+        const rawBufferSig = await sigFile.arrayBuffer();
+        const bufferSig = new Uint8Array(rawBufferSig);
+
+        const payload: NotificationApprovedPayload = {
+            id,
+            approvedFile: bufferPdf,
+            sigFile: bufferSig,
+            comment: validatedComment,
+        }
+        await addApprovedFiles(payload);
+        return {success: true};
+
+    } catch (error) {
+        console.error('Upload error:', error);
+        return {
+            success: false,
+            message: 'Ошибка при загрузке файлов на сервер'
         };
     }
 }

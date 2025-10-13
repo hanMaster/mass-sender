@@ -21,11 +21,11 @@ export async function GET(req: Request, {params}: { params: Promise<{ id: string
         const blob = new Blob([arrBuffer], {type: "application/octet-stream"});
         const fileName = notificationRecord.data!.comment;
         const encodedFilename = encodeURIComponent(`${fileName} согласованный`);
-        const contentDisposition = `attachment; filename="template.docx"; filename*=UTF-8''${encodedFilename}.docx`;
+        const contentDisposition = `attachment; filename="template.pdf"; filename*=UTF-8''${encodedFilename}.pdf`;
         return new Response(blob, {
             status: 200,
             headers: {
-                'Content-Type': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                'Content-Type': 'application/pdf',
                 'Content-Disposition': contentDisposition
             },
         })

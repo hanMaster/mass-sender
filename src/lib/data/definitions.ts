@@ -62,3 +62,10 @@ export type NotificationPayload = {
     templateId: string;
     comment: string;
 }
+
+export type NotificationApprovedPayload = {
+    id: string;
+    approvedFile: Uint8Array;
+    sigFile: Uint8Array;
+    comment: string;
+};
