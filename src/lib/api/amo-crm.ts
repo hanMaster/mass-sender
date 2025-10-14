@@ -1,9 +1,12 @@
 import {Result} from "@/lib/data/definitions";
-import {projects} from "@/lib/utils";
+import {getFunnelIdByProjectAndHouseNumber, projects} from "@/lib/utils";
 
-export type Funnel = {
-    id: string;
-    name: string;
+export type AmoLeadWithContact = {
+    leadId: string;
+    project: string;
+    funnel: string;
+    house_number: string;
+    is_main_contact: boolean;
 }
 
 const formatAccount = process.env.AMO_FORMAT_ACCOUNT as string;
@@ -16,20 +19,136 @@ const cityPipelineId = process.env.AMO_CITY_PIPELINE_ID as string;
 const cityToken = process.env.AMO_CITY_TOKEN as string;
 const cityUrl = `https://${cityAccount}.amocrm.ru/api/v4/`;
 
-export async function getFunnelsByProject(project: string): Promise<Result<Funnel[]>> {
-    if(project === projects[0]) {
+export async function getAmoLeadsByProject(project: string, houseNumber: string): Promise<Result<FullContact[]>> {
+    // const waitingFunnelId = getWaitingFunnelIdByProject(project);
+    if (project === projects[0]) {
         // ЖК Формат
         const token = formatToken;
-        const url = `${formatUrl}leads/pipelines/${formatPipelineId}`;
-        return getFunnels(url, token);
+        const funnelId = getFunnelIdByProjectAndHouseNumber(project, houseNumber);
+        const url = `${formatUrl}leads?filter[statuses][0][pipeline_id]=${formatPipelineId}&filter[statuses][0][status_id]=${funnelId}&with=contacts`;
+        const amoLeadsResult = await getAmoLeads(url, token);
+        if (!amoLeadsResult.success) {
+            return {success: false, error: amoLeadsResult.error};
+        }
+
+        const result: FullContact[] = [];
+        for (const lead of amoLeadsResult.data!) {
+            for (const c of lead.contacts) {
+                const url = `${formatUrl}contacts/${c.contactId}`;
+                const amoContact = await getContactById(url, token);
+                if (amoContact) {
+                    result.push({
+                        leadId: lead.leadId,
+                        ...amoContact,
+                        isMain: c.isMain,
+                    })
+                }
+            }
+        }
+        // Берем только собственников
+        const filtered = result.filter((contact: FullContact) => contact.owner);
+        return {success: true, data: filtered};
     } else {
         const token = cityToken;
-        const url = `${cityUrl}leads/pipelines/${cityPipelineId}`;
-        return getFunnels(url, token);
+        const funnelId = getFunnelIdByProjectAndHouseNumber(project, houseNumber);
+        const url = `${cityUrl}leads?filter[statuses][0][pipeline_id]=${cityPipelineId}&filter[statuses][0][status_id]=${funnelId}&with=contacts`;
+        const amoLeadsResult = await getAmoLeads(url, token);
+        if (!amoLeadsResult.success) {
+            return {success: false, error: amoLeadsResult.error};
+        }
+
+        const result: FullContact[] = [];
+        for (const lead of amoLeadsResult.data!) {
+            for (const c of lead.contacts) {
+                const url = `${cityUrl}contacts/${c.contactId}`;
+                const amoContact = await getContactById(url, token);
+                if (amoContact) {
+                    result.push({
+                        leadId: lead.leadId,
+                        ...amoContact,
+                        isMain: c.isMain,
+                    })
+                }
+            }
+        }
+        // Берем только собственников
+        const filtered = result.filter((contact: FullContact) => contact.owner);
+        return {success: true, data: filtered};
     }
 }
 
-async function getFunnels(url: string, token: string): Promise<Result<Funnel[]>> {
+type AmoLead = {
+    leadId: string;
+    contacts: {
+        contactId: string;
+        isMain: boolean;
+    }[];
+}
+
+async function getAmoLeads(url: string, token: string): Promise<Result<AmoLead[]>> {
+    try {
+        const amoLeads: AmoLead[] = [];
+        const res = await fetch(url, {
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+                "Authorization": `Bearer ${token}`
+            }
+        });
+        const data = await res.json();
+        const next = data._links.next;
+        const mapped: AmoLead[] = data._embedded.leads.map((s: any) => ({
+            leadId: s.id,
+            contacts: s._embedded.contacts.map((c: any) => ({contactId: c.id, isMain: c.is_main}))
+        }));
+        amoLeads.push(...mapped);
+
+        // Если результат более 250 строк, появится пагинация
+        while (next) {
+            const res = await fetch(next.href, {
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json",
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+            const data = await res.json();
+            const mapped: AmoLead[] = data._embedded.leads.map((s: any) => ({
+                leadId: s.id,
+                contacts: s._embedded.contacts.map((c: any) => ({contactId: c.id, isMain: c.is_main}))
+            }));
+            amoLeads.push(...mapped);
+        }
+
+        return {success: true, data: amoLeads};
+    } catch (error: any) {
+        console.error(error);
+        return {success: false, error: error.message};
+    }
+}
+
+export type FullContact = {
+    leadId: string;
+    id: string;
+    owner: boolean;
+    isMain: boolean;
+    first_name: string;
+    middle_name: string;
+    last_name: string;
+    phone: string;
+    email: string;
+}
+type Contact = {
+    id: string;
+    owner: boolean;
+    first_name: string;
+    middle_name: string;
+    last_name: string;
+    phone: string;
+    email: string;
+}
+
+async function getContactById(url: string, token: string): Promise<Contact | undefined> {
     try {
         const res = await fetch(url, {
             headers: {
@@ -39,14 +158,32 @@ async function getFunnels(url: string, token: string): Promise<Result<Funnel[]>>
             }
         });
         const data = await res.json();
-        const funnels: Funnel[] = data._embedded.statuses.map((s: any) => ({
-            id: s.id,
-            name: s.name
-        } as Funnel));
-        const filtered = funnels.filter((f) => f.name.toLowerCase().includes('передача'))
-        return {success: true, data: filtered};
+        return intoContact(data);
     } catch (error: any) {
         console.error(error);
-        return {success: false, error: error.message};
     }
+}
+
+type CustomFieldsValues = {
+    field_name: string;
+    values: {
+        value: string | number | boolean;
+    }[]
+}
+
+function intoContact(raw: any): Contact {
+    const id = raw.id;
+    const owner = (raw.custom_fields_values as CustomFieldsValues[])
+        .find(cfv => cfv.field_name === 'Собственник')?.values[0].value as boolean;
+    const first_name = (raw.custom_fields_values as CustomFieldsValues[])
+        .find(cfv => cfv.field_name === 'Имя')?.values[0].value as string;
+    const middle_name = (raw.custom_fields_values as CustomFieldsValues[])
+        .find(cfv => cfv.field_name === 'Фамилия')?.values[0].value as string;
+    const last_name = (raw.custom_fields_values as CustomFieldsValues[])
+        .find(cfv => cfv.field_name === 'Фамилия')?.values[0].value as string;
+    const phone = (raw.custom_fields_values as CustomFieldsValues[])
+        .find(cfv => cfv.field_name === 'Телефон')?.values[0].value as string;
+    const email = (raw.custom_fields_values as CustomFieldsValues[])
+        .find(cfv => cfv.field_name === 'Email')?.values[0].value as string;
+    return {id, owner, first_name, middle_name, last_name, phone, email}
 }

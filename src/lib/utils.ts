@@ -63,3 +63,23 @@ export function getHouseNumbersForSelect() {
         },
     ]
 }
+
+export function getFunnelIdByProjectAndHouseNumber(project: string, houseNumber: string): string | undefined {
+    let funnelId;
+    if (project === projects[0]) {
+        const mapping = formatFunnelMapping.find(mapping => mapping.houseNumber === houseNumber);
+        funnelId = mapping?.funnelId;
+    } else {
+        const mapping = cityFunnelMapping.find(mapping => mapping.houseNumber === houseNumber);
+        funnelId = mapping?.funnelId;
+    }
+    return funnelId;
+}
+
+export function getWaitingFunnelIdByProject(project: string): string {
+    if (project === projects[0]) {
+        return formatFunnelMapping[0].funnelId;
+    } else {
+        return cityFunnelMapping[0].funnelId;
+    }
+}
