@@ -59,7 +59,7 @@ async function migrateMailings() {
         (
             id              UUID                     DEFAULT uuid_generate_v4() PRIMARY KEY,
             project         VARCHAR(20) NOT NULL,
-            house_number    VARCHAR(10) NOT NULL,
+            house_number    VARCHAR(20) NOT NULL,
             notification_id UUID        NOT NULL,
             is_mail_sent    BOOLEAN                  DEFAULT FALSE,
             created_at      TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
@@ -97,7 +97,7 @@ export async function GET() {
             // seedAdmin(),
             // migrateTemplates(),
             // migrateNotifications(),
-            // migrateMailings(),
+            migrateMailings(),
             // migrateMailList()
         ]);
 

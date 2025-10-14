@@ -3,6 +3,7 @@
 import postgres from "postgres";
 import {MailingForAdd, Mailings, Result} from "@/lib/data/definitions";
 import {revalidatePath} from "next/cache";
+import {error} from "next/dist/build/output/log";
 
 const sql = postgres(process.env.POSTGRES_URL!, {ssl: 'require'});
 
@@ -20,6 +21,28 @@ export async function fetchMailings(): Promise<Result<Mailings[]>> {
                      INNER JOIN notifications on notification_id = notifications.id;
         `;
         return {success: true, data};
+    } catch (error: any) {
+        console.error('Database Error:', error);
+        return {success: false, error: error.message};
+    }
+}
+
+export async function fetchMailingById(id: string): Promise<Result<Mailings>> {
+    try {
+        const data = await sql<Mailings[]>`
+            select mailings.id,
+                   mailings.project,
+                   mailings.house_number,
+                   notifications.comment as notification_comment,
+                   mailings.is_mail_sent,
+                   mailings.created_at,
+                   mailings.deleted_at
+            from mailings
+                     INNER JOIN notifications on notification_id = notifications.id
+            WHERE mailings.id = ${id};
+        `;
+        if(!data.length) return {success: false, error: 'Record not found'};
+        return {success: true, data: data[0]};
     } catch (error: any) {
         console.error('Database Error:', error);
         return {success: false, error: error.message};

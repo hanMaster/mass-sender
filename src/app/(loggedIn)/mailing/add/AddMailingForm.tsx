@@ -7,12 +7,12 @@ import {z} from "zod"
 import {Button} from "@/components/ui/button"
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage,} from "@/components/ui/form"
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select"
-import {Input} from "@/components/ui/input"
 import Link from "next/link";
 import {NotificationForSelect, Result} from "@/lib/data/definitions";
-import {projects} from "@/lib/utils";
+import {HousesForSelect, projects} from "@/lib/utils";
 import {redirect} from "next/navigation";
 import {addMailing} from "@/lib/data/mailings";
+import {useState} from "react";
 
 const formSchema = z.object({
     project: z.string({error: 'Выберите проект'}).min(1, {error: 'Выберите проект'}),
@@ -20,10 +20,13 @@ const formSchema = z.object({
     notificationId: z.string({error: 'Выберите уведомление'}).min(1, {error: 'Выберите уведомление'})
 });
 
-export default function AddMailingForm({notifications}: { notifications: Result<NotificationForSelect[]> }) {
+export default function AddMailingForm({notifications, houses}: {
+    notifications: Result<NotificationForSelect[]>;
+    houses: HousesForSelect[]
+}) {
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
-    })
+    });
 
     if (!notifications.success) {
         toast.error(notifications.error);
@@ -43,6 +46,22 @@ export default function AddMailingForm({notifications}: { notifications: Result<
         }
     }
 
+    const [project, setProject] = useState<string>();
+
+    const selectProject = (name: string, field: any) => {
+        setProject(name);
+        field.onChange(name);
+    }
+
+    const numbers = () => {
+        if (project && project.length) {
+            const filtered = houses.filter(house => house.project === project);
+            return filtered[0].mapping;
+        } else {
+            return [];
+        }
+    };
+
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 min-w-xl max-w-3xl mx-auto py-10">
@@ -57,7 +76,8 @@ export default function AddMailingForm({notifications}: { notifications: Result<
                             render={({field}) => (
                                 <FormItem>
                                     <FormLabel>Проект</FormLabel>
-                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                    <Select onValueChange={(value) => selectProject(value, field)}
+                                            defaultValue={field.value}>
                                         <FormControl className='w-full'>
                                             <SelectTrigger>
                                                 <SelectValue placeholder="Выберите проект"/>
@@ -84,12 +104,20 @@ export default function AddMailingForm({notifications}: { notifications: Result<
                             render={({field}) => (
                                 <FormItem>
                                     <FormLabel>Номер дома</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            placeholder="Выберите номер дома"
-                                            type="text"
-                                            {...field} />
-                                    </FormControl>
+                                    <Select onValueChange={field.onChange}>
+                                        <FormControl className='w-full'>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Выберите номер дома"/>
+                                            </SelectTrigger>
+                                        </FormControl>
+                                        <SelectContent className="w-[var(--radix-select-trigger-width)]">
+                                            {numbers().map(p => (
+                                                <SelectItem value={p.houseNumber}
+                                                            key={p.houseNumber}>{p.houseNumber}</SelectItem>
+                                            ))}
+
+                                        </SelectContent>
+                                    </Select>
                                     <FormMessage/>
                                 </FormItem>
                             )}
