@@ -22,6 +22,7 @@ const cityUrl = `https://${cityAccount}.amocrm.ru/api/v4/`;
 export async function getAmoLeadsByProject(project: string, houseNumber: string): Promise<Result<FullContact[]>> {
     // const waitingFunnelId = getWaitingFunnelIdByProject(project);
     if (project === projects[0]) {
+        console.log('start: ', new Date().toLocaleTimeString());
         // ЖК Формат
         const token = formatToken;
         const funnelId = getFunnelIdByProjectAndHouseNumber(project, houseNumber);
@@ -35,18 +36,15 @@ export async function getAmoLeadsByProject(project: string, houseNumber: string)
         for (const lead of amoLeadsResult.data!) {
             for (const c of lead.contacts) {
                 const url = `${formatUrl}contacts/${c.contactId}`;
-                const amoContact = await getContactById(url, token);
+                const amoContact = await getContactById(url, token, lead.leadId, c.isMain);
                 if (amoContact) {
-                    result.push({
-                        leadId: lead.leadId,
-                        ...amoContact,
-                        isMain: c.isMain,
-                    })
+                    result.push(amoContact);
                 }
             }
         }
         // Берем только собственников
         const filtered = result.filter((contact: FullContact) => contact.owner);
+        console.log('finish: ', new Date().toLocaleTimeString());
         return {success: true, data: filtered};
     } else {
         const token = cityToken;
@@ -61,13 +59,9 @@ export async function getAmoLeadsByProject(project: string, houseNumber: string)
         for (const lead of amoLeadsResult.data!) {
             for (const c of lead.contacts) {
                 const url = `${cityUrl}contacts/${c.contactId}`;
-                const amoContact = await getContactById(url, token);
+                const amoContact = await getContactById(url, token, lead.leadId, c.isMain);
                 if (amoContact) {
-                    result.push({
-                        leadId: lead.leadId,
-                        ...amoContact,
-                        isMain: c.isMain,
-                    })
+                    result.push(amoContact);
                 }
             }
         }
@@ -138,17 +132,8 @@ export type FullContact = {
     phone: string;
     email: string;
 }
-type Contact = {
-    id: string;
-    owner: boolean;
-    first_name: string;
-    middle_name: string;
-    last_name: string;
-    phone: string;
-    email: string;
-}
 
-async function getContactById(url: string, token: string): Promise<Contact | undefined> {
+async function getContactById(url: string, token: string, leadId: string, isMain: boolean): Promise<FullContact | undefined> {
     try {
         const res = await fetch(url, {
             headers: {
@@ -158,7 +143,7 @@ async function getContactById(url: string, token: string): Promise<Contact | und
             }
         });
         const data = await res.json();
-        return intoContact(data);
+        return intoContact(data, leadId, isMain);
     } catch (error: any) {
         console.error(error);
     }
@@ -171,7 +156,7 @@ type CustomFieldsValues = {
     }[]
 }
 
-function intoContact(raw: any): Contact {
+function intoContact(raw: any, leadId: string, isMain: boolean): FullContact {
     const id = raw.id;
     const owner = (raw.custom_fields_values as CustomFieldsValues[])
         .find(cfv => cfv.field_name === 'Собственник')?.values[0].value as boolean;
@@ -185,5 +170,5 @@ function intoContact(raw: any): Contact {
         .find(cfv => cfv.field_name === 'Телефон')?.values[0].value as string;
     const email = (raw.custom_fields_values as CustomFieldsValues[])
         .find(cfv => cfv.field_name === 'Email')?.values[0].value as string;
-    return {id, owner, first_name, middle_name, last_name, phone, email}
+    return {leadId, id, owner, isMain, first_name, middle_name, last_name, phone, email}
 }
