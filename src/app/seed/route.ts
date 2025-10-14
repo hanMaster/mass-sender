@@ -61,6 +61,7 @@ async function migrateMailings() {
             project         VARCHAR(20) NOT NULL,
             house_number    VARCHAR(20) NOT NULL,
             notification_id UUID        NOT NULL,
+            collect_status  VARCHAR(20)              DEFAULT 'in progress',
             is_mail_sent    BOOLEAN                  DEFAULT FALSE,
             created_at      TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
             deleted_at      TIMESTAMPTZ              DEFAULT NULL
@@ -82,7 +83,7 @@ async function migrateMailList() {
             object_number   VARCHAR(10)  NOT NULL,
             is_main_contact BOOLEAN                  DEFAULT FALSE,
             full_name       VARCHAR(100) NOT NULL,
-            phone           VARCHAR(11)  NOT NULL,
+            phone           VARCHAR(20)  NOT NULL,
             email           VARCHAR(30)  NOT NULL,
             created_at      TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
             deleted_at      TIMESTAMPTZ              DEFAULT NULL
@@ -97,7 +98,7 @@ export async function GET() {
             // seedAdmin(),
             // migrateTemplates(),
             // migrateNotifications(),
-            migrateMailings(),
+            // migrateMailings(),
             // migrateMailList()
         ]);
 

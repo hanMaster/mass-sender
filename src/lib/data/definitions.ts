@@ -75,6 +75,7 @@ export type MailingRecord = {
     project: string;
     house_number: string;
     notification_id: string;
+    collect_status: string;
     is_mail_sent: boolean;
     created_at: Date;
     deleted_at: Date;
@@ -85,6 +86,7 @@ export type Mailings = {
     project: string;
     house_number: string;
     notification_comment: string;
+    collect_status: string;
     is_mail_sent: boolean;
     created_at: Date;
     deleted_at: Date;

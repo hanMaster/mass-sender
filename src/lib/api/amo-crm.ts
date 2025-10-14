@@ -20,9 +20,11 @@ const cityToken = process.env.AMO_CITY_TOKEN as string;
 const cityUrl = `https://${cityAccount}.amocrm.ru/api/v4/`;
 
 export async function getAmoLeadsByProject(project: string, houseNumber: string): Promise<Result<FullContact[]>> {
+    console.log('Start collect contacts');
+
     // const waitingFunnelId = getWaitingFunnelIdByProject(project);
     if (project === projects[0]) {
-        console.log('start: ', new Date().toLocaleTimeString());
+        console.log('Format start: ', new Date().toLocaleTimeString());
         // ЖК Формат
         const token = formatToken;
         const funnelId = getFunnelIdByProjectAndHouseNumber(project, houseNumber);
@@ -44,9 +46,10 @@ export async function getAmoLeadsByProject(project: string, houseNumber: string)
         }
         // Берем только собственников
         const filtered = result.filter((contact: FullContact) => contact.owner);
-        console.log('finish: ', new Date().toLocaleTimeString());
+        console.log('Format finish: ', new Date().toLocaleTimeString());
         return {success: true, data: filtered};
     } else {
+        console.log('City start: ', new Date().toLocaleTimeString());
         const token = cityToken;
         const funnelId = getFunnelIdByProjectAndHouseNumber(project, houseNumber);
         const url = `${cityUrl}leads?filter[statuses][0][pipeline_id]=${cityPipelineId}&filter[statuses][0][status_id]=${funnelId}&with=contacts`;
@@ -67,6 +70,7 @@ export async function getAmoLeadsByProject(project: string, houseNumber: string)
         }
         // Берем только собственников
         const filtered = result.filter((contact: FullContact) => contact.owner);
+        console.log('City finish: ', new Date().toLocaleTimeString());
         return {success: true, data: filtered};
     }
 }
