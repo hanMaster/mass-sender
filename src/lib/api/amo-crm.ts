@@ -71,6 +71,7 @@ export async function getAmoLeadsByProject(project: string, houseNumber: string)
         // Берем только собственников
         const filtered = result.filter((contact: FullContact) => contact.owner);
         console.log('City finish: ', new Date().toLocaleTimeString());
+        console.table(filtered);
         return {success: true, data: filtered};
     }
 }

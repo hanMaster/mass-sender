@@ -1,7 +1,7 @@
 'use server';
 
 import postgres from "postgres";
-import {MailingForAdd, Mailings, Result} from "@/lib/data/definitions";
+import {MailingForAdd, Mailings, MailListRecord, Result} from "@/lib/data/definitions";
 import {revalidatePath} from "next/cache";
 import {FullContact} from "@/lib/api/amo-crm";
 import {collectContacts} from "@/lib/api/collect-contacts";
@@ -92,7 +92,7 @@ export async function saveCollectStatus(id: string, status: string) {
     `;
 }
 
-export async function saveContacts(id: string, contacts: FullContact[]) {
+export async function saveContacts(mailingId: string, contacts: FullContact[]) {
     const values = contacts.map(c => (
         {
             dealId: c.leadId,
@@ -104,14 +104,33 @@ export async function saveContacts(id: string, contacts: FullContact[]) {
             email: c.email
         }));
     console.log('Saving...');
-    for (const v of values) {
-        await sql`
-            INSERT INTO mail_list (mailing_id, project, funnel, house_number, deal_id, object_type, object_number,
-                                   full_name, is_main_contact, phone, email)
-            VALUES (${id}, 'ЖК Формат', 'funnel', 'house', ${v.dealId}, ${v.objectType}, ${v.objNumber}, ${v.full_name},
-                    ${v.phone}, ${v.email});
-        `;
+    try {
+        for (const v of values) {
+            await sql`
+                INSERT INTO mail_list (mailing_id, project, funnel, house_number, deal_id, object_type, object_number,
+                                       full_name, is_main_contact, phone, email)
+                VALUES (${mailingId}, 'ЖК Формат', 'funnel', 'house', ${v.dealId}, ${v.objectType}, ${v.objNumber},
+                        ${v.full_name}, ${v.isMain},
+                            ${v.phone}, ${v.email});
+            `;
+        }
+        await saveCollectStatus(mailingId, 'done');
+    } catch (error) {
+        console.error('Database Error:', error);
+        await saveCollectStatus(mailingId, error as string);
     }
+}
 
-    await saveCollectStatus(id, 'done');
+export async function fetchContacts(mailingId: string): Promise<Result<MailListRecord[]>> {
+    try {
+        const data = await sql<MailListRecord[]>`
+            select *
+            from mail_list
+            WHERE mailing_id = ${mailingId};
+        `;
+        return {success: true, data};
+    } catch (error: any) {
+        console.error('Database Error:', error);
+        return {success: false, error: error.message};
+    }
 }
