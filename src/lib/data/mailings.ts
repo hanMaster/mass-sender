@@ -99,7 +99,7 @@ export async function saveContacts(mailingId: string, contacts: FullContact[]) {
             dealId: c.leadId,
             objectType: 'Квартира',
             objNumber: '12',
-            full_name: `${c.last_name} ${c.middle_name} ${c.first_name}`,
+            full_name: `${c.last_name} ${c.first_name} ${c.middle_name}`,
             isMain: c.isMain,
             phone: c.phone,
             email: c.email

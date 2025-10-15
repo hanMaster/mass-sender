@@ -175,7 +175,7 @@ function intoContact(raw: any, leadId: string, isMain: boolean, funnel: string):
     const first_name = (raw.custom_fields_values as CustomFieldsValues[])
         .find(cfv => cfv.field_name === 'Имя')?.values[0].value as string;
     const middle_name = (raw.custom_fields_values as CustomFieldsValues[])
-        .find(cfv => cfv.field_name === 'Фамилия')?.values[0].value as string;
+        .find(cfv => cfv.field_name === 'Отчество')?.values[0].value as string;
     const last_name = (raw.custom_fields_values as CustomFieldsValues[])
         .find(cfv => cfv.field_name === 'Фамилия')?.values[0].value as string;
     const phone = (raw.custom_fields_values as CustomFieldsValues[])
