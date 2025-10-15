@@ -134,3 +134,17 @@ export async function fetchContacts(mailingId: string): Promise<Result<MailListR
         return {success: false, error: error.message};
     }
 }
+
+export async function cleanContacts(mailingId: string): Promise<Result<void>> {
+    try {
+        await sql`
+            DELETE
+            FROM mail_list
+            WHERE mailing_id = ${mailingId};
+        `;
+        return {success: true};
+    } catch (error: any) {
+        console.error('Database Error:', error);
+        return {success: false, error: error.message};
+    }
+}
