@@ -81,12 +81,15 @@ export type MailingRecord = {
     deleted_at: Date;
 }
 
-export type Mailings = {
+export type Mailing = {
     id: string;
     project: string;
     house_number: string;
     notification_comment: string;
     collect_status: string;
+    wait_funnel_count: string;
+    funnel_name: string;
+    funnel_count: string;
     is_mail_sent: boolean;
     created_at: Date;
     deleted_at: Date;

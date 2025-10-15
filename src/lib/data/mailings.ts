@@ -1,16 +1,16 @@
 'use server';
 
 import postgres from "postgres";
-import {MailingForAdd, Mailings, MailListRecord, Result} from "@/lib/data/definitions";
+import {MailingForAdd, Mailing, MailListRecord, Result} from "@/lib/data/definitions";
 import {revalidatePath} from "next/cache";
 import {FullContact} from "@/lib/api/amo-crm";
 import {collectContacts} from "@/lib/api/collect-contacts";
 
 const sql = postgres(process.env.POSTGRES_URL!, {ssl: 'require'});
 
-export async function fetchMailings(): Promise<Result<Mailings[]>> {
+export async function fetchMailings(): Promise<Result<Mailing[]>> {
     try {
-        const data = await sql<Mailings[]>`
+        const data = await sql<Mailing[]>`
             select mailings.id,
                    mailings.project,
                    mailings.house_number,
@@ -28,14 +28,17 @@ export async function fetchMailings(): Promise<Result<Mailings[]>> {
     }
 }
 
-export async function fetchMailingById(id: string): Promise<Result<Mailings>> {
+export async function fetchMailingById(id: string): Promise<Result<Mailing>> {
     try {
-        const data = await sql<Mailings[]>`
+        const data = await sql<Mailing[]>`
             select mailings.id,
                    mailings.project,
                    mailings.house_number,
                    notifications.comment as notification_comment,
                    mailings.collect_status,
+                   mailings.wait_funnel_count,
+                   mailings.funnel_name,
+                   mailings.funnel_count,
                    mailings.is_mail_sent,
                    mailings.created_at,
                    mailings.deleted_at
@@ -95,21 +98,26 @@ export async function saveCollectStatus(id: string, status: string) {
 export async function saveContacts(mailingId: string, contacts: FullContact[]) {
     const values = contacts.map(c => (
         {
+            funnel: c.funnel,
             full_name: `${c.last_name} ${c.first_name} ${c.middle_name}`,
             email: c.email
         }));
     console.log('Saving...');
+
     try {
+        const stat: Record<string, number> = {};
         const emails = new Set<string>();
         for (const v of values) {
-            if(emails.has(v.email)) continue;
+            const cnt = stat[v.funnel] ?? 0;
+            stat[v.funnel] = cnt + 1;
+            if (emails.has(v.email)) continue;
             emails.add(v.email);
             await sql`
                 INSERT INTO mail_list (mailing_id, full_name, email)
                 VALUES (${mailingId}, ${v.full_name}, ${v.email});
             `;
         }
-        await saveCollectStatus(mailingId, 'done');
+        await saveStat(mailingId, stat);
     } catch (error) {
         console.error('Database Error:', error);
         await saveCollectStatus(mailingId, error as string);
@@ -136,6 +144,42 @@ export async function cleanContacts(mailingId: string): Promise<Result<void>> {
             DELETE
             FROM mail_list
             WHERE mailing_id = ${mailingId};
+        `;
+        await sql`
+            UPDATE public.mailings
+            SET wait_funnel_count = 0,
+                funnel_count      = 0
+            WHERE id = ${mailingId};
+        `;
+        return {success: true};
+    } catch (error: any) {
+        console.error('Database Error:', error);
+        return {success: false, error: error.message};
+    }
+}
+
+export async function saveStat(mailingId: string, stat: Record<string, number>): Promise<Result<void>> {
+    const keys = Object.keys(stat);
+    let waitFunnelCount = 0;
+    let funnelName = '';
+    let funnelCount = 0;
+    for (const key of keys) {
+        if (key.toLowerCase().startsWith('передача')) {
+            funnelName = key;
+            funnelCount = stat[key];
+        } else {
+            waitFunnelCount = stat[key];
+        }
+    }
+
+    try {
+        await sql`
+            UPDATE mailings
+            SET wait_funnel_count = ${waitFunnelCount},
+                funnel_name       = ${funnelName},
+                funnel_count      = ${funnelCount},
+                collect_status    = 'done'
+            WHERE id = ${mailingId};
         `;
         return {success: true};
     } catch (error: any) {

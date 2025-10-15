@@ -62,7 +62,6 @@ async function migrateMailings() {
             house_number      VARCHAR(20) NOT NULL,
             notification_id   UUID        NOT NULL,
             collect_status    VARCHAR                  DEFAULT 'in progress',
-            wait_funnel_name  VARCHAR(50),
             wait_funnel_count INT                      DEFAULT 0,
             funnel_name       VARCHAR(50),
             funnel_count      INT                      DEFAULT 0,
@@ -92,7 +91,7 @@ export async function GET() {
             // seedAdmin(),
             // migrateTemplates(),
             // migrateNotifications(),
-            // migrateMailings(),
+            migrateMailings(),
             // migrateMailList()
         ]);
 
