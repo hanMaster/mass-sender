@@ -64,16 +64,24 @@ export function getHouseNumbersForSelect() {
     ]
 }
 
-export function getFunnelIdByProjectAndHouseNumber(project: string, houseNumber: string): string | undefined {
+export type FunnelInfo = {
+    funnelId: string | undefined;
+    funnelName: string | undefined;
+}
+
+export function getFunnelIdByProjectAndHouseNumber(project: string, houseNumber: string): FunnelInfo {
     let funnelId;
+    let funnelName;
     if (project === projects[0]) {
         const mapping = formatFunnelMapping.find(mapping => mapping.houseNumber === houseNumber);
         funnelId = mapping?.funnelId;
+        funnelName = mapping?.funnelName;
     } else {
         const mapping = cityFunnelMapping.find(mapping => mapping.houseNumber === houseNumber);
         funnelId = mapping?.funnelId;
+        funnelName = mapping?.funnelName;
     }
-    return funnelId;
+    return {funnelId, funnelName};
 }
 
 export function getWaitingFunnelIdByProject(project: string): string {

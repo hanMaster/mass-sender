@@ -1,4 +1,4 @@
-import {FullContact, getAmoLeadsByProject} from "@/lib/api/amo-crm";
+import {getAmoLeadsByProject} from "@/lib/api/amo-crm";
 import {saveCollectStatus, saveContacts} from "@/lib/data/mailings";
 
 export async function collectContacts(mailingId: string, project: string, houseNumber: string) {
@@ -8,7 +8,7 @@ export async function collectContacts(mailingId: string, project: string, houseN
         return saveCollectStatus(mailingId, contactsResult.error as string);
     }
 
-    await saveContacts(mailingId, contactsResult.data as FullContact[]);
+    await saveContacts(mailingId, contactsResult.data!);
     console.log('Successfully collecting contacts for mailingId: ', mailingId);
 
 }

@@ -75,9 +75,7 @@ async function migrateMailList() {
         (
             id              UUID                     DEFAULT uuid_generate_v4() PRIMARY KEY,
             mailing_id      UUID         NOT NULL,
-            project         VARCHAR(20)  NOT NULL,
             funnel          VARCHAR(40)  NOT NULL,
-            house_number    VARCHAR(10)  NOT NULL,
             deal_id         VARCHAR(10)  NOT NULL,
             object_type     VARCHAR(10)  NOT NULL,
             object_number   VARCHAR(10)  NOT NULL,
@@ -99,7 +97,7 @@ export async function GET() {
             // migrateTemplates(),
             // migrateNotifications(),
             // migrateMailings(),
-            migrateMailList()
+            // migrateMailList()
         ]);
 
         return Response.json({message: 'Database seeded successfully'});

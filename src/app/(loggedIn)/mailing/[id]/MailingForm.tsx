@@ -33,7 +33,6 @@ export default function MailingForm({mailingId, collectStatus, contacts}: {
                     <TableHeader>
                         <TableRow>
                             <TableHead>№</TableHead>
-                            <TableHead>№ дома</TableHead>
                             <TableHead>Воронка</TableHead>
                             <TableHead className="w-[100px]">№ сделки</TableHead>
                             <TableHead>Тип объекта</TableHead>
@@ -48,7 +47,6 @@ export default function MailingForm({mailingId, collectStatus, contacts}: {
                         {contacts.map((item, index) =>
                             <TableRow key={item.id}>
                                 <TableCell className="font-medium">{index + 1}</TableCell>
-                                <TableCell>{item.house_number}</TableCell>
                                 <TableCell>{item.funnel}</TableCell>
                                 <TableCell>{item.deal_id}</TableCell>
                                 <TableCell>{item.object_type}</TableCell>

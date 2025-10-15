@@ -95,6 +95,7 @@ export async function saveCollectStatus(id: string, status: string) {
 export async function saveContacts(mailingId: string, contacts: FullContact[]) {
     const values = contacts.map(c => (
         {
+            funnel: c.funnel,
             dealId: c.leadId,
             objectType: 'Квартира',
             objNumber: '12',
@@ -107,11 +108,12 @@ export async function saveContacts(mailingId: string, contacts: FullContact[]) {
     try {
         for (const v of values) {
             await sql`
-                INSERT INTO mail_list (mailing_id, project, funnel, house_number, deal_id, object_type, object_number,
+                INSERT INTO mail_list (mailing_id, funnel, deal_id, object_type, object_number,
                                        full_name, is_main_contact, phone, email)
-                VALUES (${mailingId}, 'ЖК Формат', 'funnel', 'house', ${v.dealId}, ${v.objectType}, ${v.objNumber},
+                VALUES (${mailingId}, ${v.funnel}, ${v.dealId}, ${v.objectType},
+                        ${v.objNumber},
                         ${v.full_name}, ${v.isMain},
-                            ${v.phone}, ${v.email});
+                        ${v.phone}, ${v.email});
             `;
         }
         await saveCollectStatus(mailingId, 'done');

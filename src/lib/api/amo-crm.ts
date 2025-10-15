@@ -27,7 +27,10 @@ export async function getAmoLeadsByProject(project: string, houseNumber: string)
         console.log('Format start: ', new Date().toLocaleTimeString());
         // ЖК Формат
         const token = formatToken;
-        const funnelId = getFunnelIdByProjectAndHouseNumber(project, houseNumber);
+        const {funnelId, funnelName} = getFunnelIdByProjectAndHouseNumber(project, houseNumber);
+        if (!funnelId || !funnelName) {
+            return {success: false, error: `Funnel not found for project: ${project} (${houseNumber})`};
+        }
         const url = `${formatUrl}leads?filter[statuses][0][pipeline_id]=${formatPipelineId}&filter[statuses][0][status_id]=${funnelId}&with=contacts`;
         const amoLeadsResult = await getAmoLeads(url, token);
         if (!amoLeadsResult.success) {
@@ -38,7 +41,7 @@ export async function getAmoLeadsByProject(project: string, houseNumber: string)
         for (const lead of amoLeadsResult.data!) {
             for (const c of lead.contacts) {
                 const url = `${formatUrl}contacts/${c.contactId}`;
-                const amoContact = await getContactById(url, token, lead.leadId, c.isMain);
+                const amoContact = await getContactById(url, token, funnelName, lead.leadId, c.isMain);
                 if (amoContact) {
                     result.push(amoContact);
                 }
@@ -51,7 +54,10 @@ export async function getAmoLeadsByProject(project: string, houseNumber: string)
     } else {
         console.log('City start: ', new Date().toLocaleTimeString());
         const token = cityToken;
-        const funnelId = getFunnelIdByProjectAndHouseNumber(project, houseNumber);
+        const {funnelId, funnelName} = getFunnelIdByProjectAndHouseNumber(project, houseNumber);
+        if (!funnelId || !funnelName) {
+            return {success: false, error: `Funnel not found for project: ${project} (${houseNumber})`};
+        }
         const url = `${cityUrl}leads?filter[statuses][0][pipeline_id]=${cityPipelineId}&filter[statuses][0][status_id]=${funnelId}&with=contacts`;
         const amoLeadsResult = await getAmoLeads(url, token);
         if (!amoLeadsResult.success) {
@@ -62,7 +68,7 @@ export async function getAmoLeadsByProject(project: string, houseNumber: string)
         for (const lead of amoLeadsResult.data!) {
             for (const c of lead.contacts) {
                 const url = `${cityUrl}contacts/${c.contactId}`;
-                const amoContact = await getContactById(url, token, lead.leadId, c.isMain);
+                const amoContact = await getContactById(url, token, funnelName, lead.leadId, c.isMain);
                 if (amoContact) {
                     result.push(amoContact);
                 }
@@ -127,6 +133,7 @@ async function getAmoLeads(url: string, token: string): Promise<Result<AmoLead[]
 }
 
 export type FullContact = {
+    funnel: string;
     leadId: string;
     id: string;
     owner: boolean;
@@ -138,7 +145,7 @@ export type FullContact = {
     email: string;
 }
 
-async function getContactById(url: string, token: string, leadId: string, isMain: boolean): Promise<FullContact | undefined> {
+async function getContactById(url: string, token: string, funnel: string, leadId: string, isMain: boolean): Promise<FullContact | undefined> {
     try {
         const res = await fetch(url, {
             headers: {
@@ -148,7 +155,7 @@ async function getContactById(url: string, token: string, leadId: string, isMain
             }
         });
         const data = await res.json();
-        return intoContact(data, leadId, isMain);
+        return intoContact(data, leadId, isMain, funnel);
     } catch (error: any) {
         console.error(error);
     }
@@ -161,7 +168,7 @@ type CustomFieldsValues = {
     }[]
 }
 
-function intoContact(raw: any, leadId: string, isMain: boolean): FullContact {
+function intoContact(raw: any, leadId: string, isMain: boolean, funnel: string): FullContact {
     const id = raw.id;
     const owner = (raw.custom_fields_values as CustomFieldsValues[])
         .find(cfv => cfv.field_name === 'Собственник')?.values[0].value as boolean;
@@ -175,5 +182,5 @@ function intoContact(raw: any, leadId: string, isMain: boolean): FullContact {
         .find(cfv => cfv.field_name === 'Телефон')?.values[0].value as string;
     const email = (raw.custom_fields_values as CustomFieldsValues[])
         .find(cfv => cfv.field_name === 'Email')?.values[0].value as string;
-    return {leadId, id, owner, isMain, first_name, middle_name, last_name, phone, email}
+    return {funnel, leadId, id, owner, isMain, first_name, middle_name, last_name, phone, email}
 }
