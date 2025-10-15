@@ -29,7 +29,8 @@ export async function fetchNotifications(): Promise<Result<NotificationRecord[]>
 export async function fetchNotificationsForSelect(): Promise<Result<NotificationForSelect[]>> {
     const data = await fetchNotifications();
     if (!data.success) return data;
-    const selectList = data.data!.map(r => ({id: r.id, comment: r.comment}));
+    const list = data.data!.filter(n => !!n.approved_file);
+    const selectList = list.map(r => ({id: r.id, comment: r.comment}));
     return {success: true, data: selectList};
 }
 
