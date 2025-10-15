@@ -33,13 +33,7 @@ export default function MailingForm({mailingId, collectStatus, contacts}: {
                     <TableHeader>
                         <TableRow>
                             <TableHead>№</TableHead>
-                            <TableHead>Воронка</TableHead>
-                            <TableHead className="w-[100px]">№ сделки</TableHead>
-                            <TableHead>Тип объекта</TableHead>
-                            <TableHead>№ объекта</TableHead>
                             <TableHead>ФИО</TableHead>
-                            <TableHead>Основной</TableHead>
-                            <TableHead>Телефон</TableHead>
                             <TableHead>Email</TableHead>
                         </TableRow>
                     </TableHeader>
@@ -47,13 +41,7 @@ export default function MailingForm({mailingId, collectStatus, contacts}: {
                         {contacts.map((item, index) =>
                             <TableRow key={item.id}>
                                 <TableCell className="font-medium">{index + 1}</TableCell>
-                                <TableCell>{item.funnel}</TableCell>
-                                <TableCell>{item.deal_id}</TableCell>
-                                <TableCell>{item.object_type}</TableCell>
-                                <TableCell>{item.object_number}</TableCell>
                                 <TableCell>{item.full_name}</TableCell>
-                                <TableCell>{item.is_main_contact ? 'Да' : 'Нет'}</TableCell>
-                                <TableCell>{item.phone}</TableCell>
                                 <TableCell>{item.email}</TableCell>
                             </TableRow>
                         )}
