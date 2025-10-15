@@ -2,7 +2,7 @@ import {Button} from "@/components/ui/button";
 import {Label} from "@/components/ui/label";
 import {Mailing, MailListRecord} from "@/lib/data/definitions";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
-import {recollectContacts} from "@/actions/mailing.action";
+import {recollectContacts, testProfit} from "@/actions/mailing.action";
 
 export default function MailingForm({mailing, collectStatus, contacts}: {
     mailing: Mailing;
@@ -28,10 +28,16 @@ export default function MailingForm({mailing, collectStatus, contacts}: {
                     <Label>{mailing.funnel_name} - {mailing.funnel_count} шт</Label>
                     <Label>Ожидание оплаты по договору - {mailing.wait_funnel_count} шт</Label>
                 </div>
-                <form action={recollectContacts}>
-                    <input type="hidden" name="mailingId" value={mailing.id}/>
-                    <Button variant='default' type='submit'>Пересобрать</Button>
-                </form>
+                <div className="flex gap-2">
+                    <form action={recollectContacts}>
+                        <input type="hidden" name="mailingId" value={mailing.id}/>
+                        <Button variant='default' type='submit' className='cursor-pointer'>Пересобрать</Button>
+                    </form>
+                    <form action={testProfit}>
+                        <Button variant='outline' type='submit'
+                                className='cursor-pointer hover:bg-red-600 hover:text-white'>Отправить</Button>
+                    </form>
+                </div>
             </div>
             {contacts.length > 0 && (
                 <Table>

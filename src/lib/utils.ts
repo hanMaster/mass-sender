@@ -42,6 +42,21 @@ export const formatFunnelMapping = [
     {funnelId: '60359194', funnelName: 'Передача ЖК16', houseNumber: '16'},
 ];
 
+export const houseMapping: Record<string, string> = {
+    'Дом №1': '1',
+    'Кладовки Дом №1': '1',
+    'Дом №2': '2',
+    'Кладовки Дом №2': '2',
+    'Дом №3': '3',
+    'Кладовки Дом №3': '3',
+    'Дом №5': '5',
+    'Кладовки Дом №5': '5',
+    'Дом №6 строение 1': '6 строение 1',
+    'Кладовки Дом 6, Строение 1': '6 строение 1',
+    'Дом №6 строение 2': '6 строение 2',
+    'Кладовки Дом 6, стр 2': '6 строение 2'
+}
+
 export type HousesForSelect = {
     project: string;
     mapping: {
@@ -84,10 +99,10 @@ export function getFunnelIdByProjectAndHouseNumber(project: string, houseNumber:
     return {funnelId, funnelName};
 }
 
-export function getWaitingFunnelIdByProject(project: string): string {
+export function getWaitingFunnelIdByProject(project: string): { funnelId: string; funnelName: string } {
     if (project === projects[0]) {
-        return formatFunnelMapping[0].funnelId;
+        return {funnelId: formatFunnelMapping[0].funnelId, funnelName: formatFunnelMapping[0].funnelName};
     } else {
-        return cityFunnelMapping[0].funnelId;
+        return {funnelId: cityFunnelMapping[0].funnelId, funnelName: cityFunnelMapping[0].funnelName};
     }
 }

@@ -1,4 +1,4 @@
-import {getAmoLeadsByProject} from "@/lib/api/amo-crm";
+import {collectWaitingLeads, getAmoLeadsByProject} from "@/lib/api/amo-crm";
 import {saveCollectStatus, saveContacts} from "@/lib/data/mailings";
 
 export async function collectContacts(mailingId: string, project: string, houseNumber: string) {
@@ -8,7 +8,16 @@ export async function collectContacts(mailingId: string, project: string, houseN
         return saveCollectStatus(mailingId, contactsResult.error as string);
     }
 
-    await saveContacts(mailingId, contactsResult.data!);
+    // Parse waiting funnel
+    const waitingResult = await collectWaitingLeads(project, houseNumber);
+    if (!waitingResult.success) {
+        console.log('Collect Error: mailingId: ', mailingId, waitingResult.error);
+        return saveCollectStatus(mailingId, waitingResult.error as string);
+    }
+
+    const contacts = [...contactsResult.data!, ...waitingResult.data!];
+
+    await saveContacts(mailingId, contacts);
     console.log('Successfully collecting contacts for mailingId: ', mailingId);
 
 }

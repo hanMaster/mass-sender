@@ -21,3 +21,7 @@ export async function recollectContacts(formData: FormData) {
     }
     collectContacts(mailingId, mailing.data!.project, mailing.data!.house_number);
 }
+
+export async function testProfit() {
+
+}
