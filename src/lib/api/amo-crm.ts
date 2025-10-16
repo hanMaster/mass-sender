@@ -1,6 +1,7 @@
 import {Result} from "@/lib/data/definitions";
 import {getFunnelIdByProjectAndHouseNumber, getWaitingFunnelIdByProject, projects} from "@/lib/utils";
 import {addProfitData} from "@/lib/api/profitbase";
+import {saveFunnelLeadsCount, saveWaitingFunnelLeadsCount} from "@/lib/data/mailings";
 
 const formatAccount = process.env.AMO_FORMAT_ACCOUNT as string;
 const formatPipelineId = process.env.AMO_FORMAT_PIPELINE_ID as string;
@@ -12,65 +13,50 @@ const cityPipelineId = process.env.AMO_CITY_PIPELINE_ID as string;
 const cityToken = process.env.AMO_CITY_TOKEN as string;
 const cityUrl = `https://${cityAccount}.amocrm.ru/api/v4/`;
 
-export async function getAmoLeadsByProject(project: string, houseNumber: string): Promise<Result<FullContact[]>> {
+export async function getAmoLeadsByProject(mailingId: string, project: string, houseNumber: string): Promise<Result<FullContact[]>> {
     console.log('Start collect contacts');
+    const {token, baseUrl, pipeline} = project === projects[0] ? {
+        token: formatToken,
+        baseUrl: formatUrl,
+        pipeline: formatPipelineId
+    } : {
+        token: cityToken,
+        baseUrl: cityUrl,
+        pipeline: cityPipelineId,
+    };
 
-    if (project === projects[0]) {
-        console.log('Format start: ', new Date().toLocaleTimeString());
-        // ЖК Формат
-        const token = formatToken;
-        const {funnelId, funnelName} = getFunnelIdByProjectAndHouseNumber(project, houseNumber);
-        if (!funnelId || !funnelName) {
-            return {success: false, error: `Funnel not found for project: ${project} (${houseNumber})`};
-        }
-        const url = `${formatUrl}leads?filter[statuses][0][pipeline_id]=${formatPipelineId}&filter[statuses][0][status_id]=${funnelId}&with=contacts`;
-        const amoLeadsResult = await getAmoLeads(url, token);
-        if (!amoLeadsResult.success) {
-            return {success: false, error: amoLeadsResult.error};
-        }
+    console.log('Collect contacts start: ', new Date().toLocaleTimeString());
 
-        const result: FullContact[] = [];
-        for (const lead of amoLeadsResult.data!) {
-            for (const c of lead.contacts) {
-                const url = `${formatUrl}contacts/${c.contactId}`;
-                const amoContact = await getContactById(url, token, funnelName, lead.leadId, c.isMain);
-                if (amoContact) {
-                    result.push(amoContact);
-                }
-            }
-        }
-        // Берем только собственников
-        const filtered = result.filter((contact: FullContact) => contact.owner);
-        console.log('Format finish: ', new Date().toLocaleTimeString());
-        return {success: true, data: filtered};
-    } else {
-        console.log('City start: ', new Date().toLocaleTimeString());
-        const token = cityToken;
-        const {funnelId, funnelName} = getFunnelIdByProjectAndHouseNumber(project, houseNumber);
-        if (!funnelId || !funnelName) {
-            return {success: false, error: `Funnel not found for project: ${project} (${houseNumber})`};
-        }
-        const url = `${cityUrl}leads?filter[statuses][0][pipeline_id]=${cityPipelineId}&filter[statuses][0][status_id]=${funnelId}&with=contacts`;
-        const amoLeadsResult = await getAmoLeads(url, token);
-        if (!amoLeadsResult.success) {
-            return {success: false, error: amoLeadsResult.error};
-        }
-
-        const result: FullContact[] = [];
-        for (const lead of amoLeadsResult.data!) {
-            for (const c of lead.contacts) {
-                const url = `${cityUrl}contacts/${c.contactId}`;
-                const amoContact = await getContactById(url, token, funnelName, lead.leadId, c.isMain);
-                if (amoContact) {
-                    result.push(amoContact);
-                }
-            }
-        }
-        // Берем только собственников
-        const filtered = result.filter((contact: FullContact) => contact.owner);
-        console.log('City finish: ', new Date().toLocaleTimeString());
-        return {success: true, data: filtered};
+    const {funnelId, funnelName} = getFunnelIdByProjectAndHouseNumber(project, houseNumber);
+    if (!funnelId || !funnelName) {
+        return {success: false, error: `Funnel not found for project: ${project} (${houseNumber})`};
     }
+    const url = `${baseUrl}leads?filter[statuses][0][pipeline_id]=${pipeline}&filter[statuses][0][status_id]=${funnelId}&with=contacts`;
+    const amoLeadsResult = await getAmoLeads(url, token);
+    if (!amoLeadsResult.success) {
+        return {success: false, error: amoLeadsResult.error};
+    }
+
+    console.log(`В воронке ${funnelName} найдено лидов: `, amoLeadsResult.data!.length);
+    await saveFunnelLeadsCount(mailingId, funnelName, amoLeadsResult.data!.length);
+    console.log('Leads', amoLeadsResult.data!.map(l => l.leadId));
+
+    const result: FullContact[] = [];
+    for (const lead of amoLeadsResult.data!) {
+        for (const c of lead.contacts) {
+            const url = `${formatUrl}contacts/${c.contactId}`;
+            const amoContact = await getContactById(url, token, funnelName, lead.leadId, c.isMain);
+            if (amoContact) {
+                result.push(amoContact);
+            }
+        }
+    }
+
+    // Берем только собственников
+    const filtered = result.filter((contact: FullContact) => contact.owner);
+    console.log(`В воронке ${funnelName} найдено собственников: `, result.length);
+    console.log('Collect contacts finish: ', new Date().toLocaleTimeString());
+    return {success: true, data: filtered};
 }
 
 export type AmoLead = {
@@ -176,7 +162,7 @@ function intoContact(raw: any, leadId: string, isMain: boolean, funnel: string):
     return {funnel, leadId, id, owner, isMain, first_name, middle_name, last_name, phone, email}
 }
 
-export async function collectWaitingLeads(project: string, houseNumber: string): Promise<Result<FullContact[]>> {
+export async function collectWaitingLeads(mailingId: string, project: string, houseNumber: string): Promise<Result<FullContact[]>> {
     const {funnelId, funnelName} = getWaitingFunnelIdByProject(project);
     const {baseUrl, pipeline, token} = project === projects[0] ? {
         baseUrl: formatUrl,
@@ -201,6 +187,8 @@ export async function collectWaitingLeads(project: string, houseNumber: string):
     const filteredByHouse = profitLeads.filter(i => i.houseNumber === houseNumber);
 
     const result: FullContact[] = [];
+    console.log('В воронке ожидания найдено лидов: ', filteredByHouse.length);
+    await saveWaitingFunnelLeadsCount(mailingId, filteredByHouse.length);
     for (const lead of filteredByHouse) {
         for (const c of lead.contacts) {
             const url = `${cityUrl}contacts/${c.contactId}`;

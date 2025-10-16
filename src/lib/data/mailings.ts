@@ -105,11 +105,8 @@ export async function saveContacts(mailingId: string, contacts: FullContact[]) {
     console.log('Saving...');
 
     try {
-        const stat: Record<string, number> = {};
         const emails = new Set<string>();
         for (const v of values) {
-            const cnt = stat[v.funnel] ?? 0;
-            stat[v.funnel] = cnt + 1;
             if (emails.has(v.email)) continue;
             emails.add(v.email);
             await sql`
@@ -117,7 +114,7 @@ export async function saveContacts(mailingId: string, contacts: FullContact[]) {
                 VALUES (${mailingId}, ${v.full_name}, ${v.email});
             `;
         }
-        await saveStat(mailingId, stat);
+        await saveCollectStatus(mailingId, 'done');
     } catch (error) {
         console.error('Database Error:', error);
         await saveCollectStatus(mailingId, error as string);
@@ -158,27 +155,25 @@ export async function cleanContacts(mailingId: string): Promise<Result<void>> {
     }
 }
 
-export async function saveStat(mailingId: string, stat: Record<string, number>): Promise<Result<void>> {
-    const keys = Object.keys(stat);
-    let waitFunnelCount = 0;
-    let funnelName = '';
-    let funnelCount = 0;
-    for (const key of keys) {
-        if (key.toLowerCase().startsWith('передача')) {
-            funnelName = key;
-            funnelCount = stat[key];
-        } else {
-            waitFunnelCount = stat[key];
-        }
-    }
-
+export async function saveFunnelLeadsCount(mailingId: string, funnelName: string, leadCount: number): Promise<Result<void>> {
     try {
         await sql`
             UPDATE mailings
-            SET wait_funnel_count = ${waitFunnelCount},
-                funnel_name       = ${funnelName},
-                funnel_count      = ${funnelCount},
-                collect_status    = 'done'
+            SET funnel_name  = ${funnelName},
+                funnel_count = ${leadCount}
+            WHERE id = ${mailingId};
+        `;
+        return {success: true};
+    } catch (error: any) {
+        console.error('Database Error:', error);
+        return {success: false, error: error.message};
+    }
+}
+export async function saveWaitingFunnelLeadsCount(mailingId: string, leadCount: number): Promise<Result<void>> {
+    try {
+        await sql`
+            UPDATE mailings
+            SET wait_funnel_count = ${leadCount}
             WHERE id = ${mailingId};
         `;
         return {success: true};
