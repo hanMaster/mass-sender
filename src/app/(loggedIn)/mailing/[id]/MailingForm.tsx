@@ -15,7 +15,7 @@ export default function MailingForm({mailing, collectStatus, contacts}: {
         status = 'Сбор завершен';
         color = 'text-green-600';
     } else if (collectStatus !== 'done' && collectStatus !== 'in progress') {
-        status = `Ошибка сбора контактов: ${collectStatus}`;
+        status = collectStatus;
         color = 'text-red-500';
     }
 

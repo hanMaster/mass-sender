@@ -95,13 +95,23 @@ export async function saveCollectStatus(id: string, status: string) {
     `;
 }
 
-export async function saveContacts(mailingId: string, contacts: FullContact[]) {
-    const values = contacts.map(c => (
-        {
-            funnel: c.funnel,
+export async function saveContacts(mailingId: string, contacts: FullContact[]): Promise<Result<void>> {
+    const withoutEmail = contacts.filter(c => !c.email).map(c => ({
+        contactId: c.id, full_name: `${c.last_name} ${c.first_name} ${c.middle_name}`, leadId: c.leadId
+    }));
+    if (withoutEmail.length > 0) {
+        await saveCollectStatus(mailingId, `Для контактов не указан email: ${JSON.stringify(withoutEmail)}`);
+        return {success: false};
+    }
+    const values = contacts.map(c => {
+        if (!c.email) {
+            console.log('Saving failed: ', c);
+        }
+        return {
             full_name: `${c.last_name} ${c.first_name} ${c.middle_name}`,
             email: c.email
-        }));
+        }
+    });
     console.log('Saving...');
 
     try {
@@ -115,9 +125,11 @@ export async function saveContacts(mailingId: string, contacts: FullContact[]) {
             `;
         }
         await saveCollectStatus(mailingId, 'done');
+        return {success: true};
     } catch (error) {
         console.error('Database Error:', error);
         await saveCollectStatus(mailingId, error as string);
+        return {success: false};
     }
 }
 
@@ -169,6 +181,7 @@ export async function saveFunnelLeadsCount(mailingId: string, funnelName: string
         return {success: false, error: error.message};
     }
 }
+
 export async function saveWaitingFunnelLeadsCount(mailingId: string, leadCount: number): Promise<Result<void>> {
     try {
         await sql`

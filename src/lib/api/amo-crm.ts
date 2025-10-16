@@ -44,10 +44,15 @@ export async function getAmoLeadsByProject(mailingId: string, project: string, h
     const result: FullContact[] = [];
     for (const lead of amoLeadsResult.data!) {
         for (const c of lead.contacts) {
-            const url = `${formatUrl}contacts/${c.contactId}`;
+            const url = `${baseUrl}contacts/${c.contactId}`;
             const amoContact = await getContactById(url, token, funnelName, lead.leadId, c.isMain);
             if (amoContact) {
                 result.push(amoContact);
+            } else {
+                return {
+                    success: false,
+                    error: `Не удалось получить данные контакта, leadId: ${lead.leadId} contactId=${c.contactId}`
+                };
             }
         }
     }
@@ -145,21 +150,25 @@ type CustomFieldsValues = {
     }[]
 }
 
-function intoContact(raw: any, leadId: string, isMain: boolean, funnel: string): FullContact {
-    const id = raw.id;
-    const owner = (raw.custom_fields_values as CustomFieldsValues[])
-        .find(cfv => cfv.field_name === 'Собственник')?.values[0].value as boolean;
-    const first_name = (raw.custom_fields_values as CustomFieldsValues[])
-        .find(cfv => cfv.field_name === 'Имя')?.values[0].value as string;
-    const middle_name = (raw.custom_fields_values as CustomFieldsValues[])
-        .find(cfv => cfv.field_name === 'Отчество')?.values[0].value as string;
-    const last_name = (raw.custom_fields_values as CustomFieldsValues[])
-        .find(cfv => cfv.field_name === 'Фамилия')?.values[0].value as string;
-    const phone = (raw.custom_fields_values as CustomFieldsValues[])
-        .find(cfv => cfv.field_name === 'Телефон')?.values[0].value as string;
-    const email = (raw.custom_fields_values as CustomFieldsValues[])
-        .find(cfv => cfv.field_name === 'Email')?.values[0].value as string;
-    return {funnel, leadId, id, owner, isMain, first_name, middle_name, last_name, phone, email}
+function intoContact(raw: any, leadId: string, isMain: boolean, funnel: string): FullContact | undefined {
+    try {
+        const id = raw.id;
+        const owner = (raw.custom_fields_values as CustomFieldsValues[])
+            .find(cfv => cfv.field_name === 'Собственник')?.values[0].value as boolean;
+        const first_name = (raw.custom_fields_values as CustomFieldsValues[])
+            .find(cfv => cfv.field_name === 'Имя')?.values[0].value as string;
+        const middle_name = (raw.custom_fields_values as CustomFieldsValues[])
+            .find(cfv => cfv.field_name === 'Отчество')?.values[0].value as string;
+        const last_name = (raw.custom_fields_values as CustomFieldsValues[])
+            .find(cfv => cfv.field_name === 'Фамилия')?.values[0].value as string;
+        const phone = (raw.custom_fields_values as CustomFieldsValues[])
+            .find(cfv => cfv.field_name === 'Телефон')?.values[0].value as string;
+        const email = (raw.custom_fields_values as CustomFieldsValues[])
+            .find(cfv => cfv.field_name === 'Email')?.values[0].value as string;
+        return {funnel, leadId, id, owner, isMain, first_name, middle_name, last_name, phone, email}
+    } catch (error: any) {
+        console.error(`[intoContact] leadId: ${leadId}, contactId: ${raw.id}`, error);
+    }
 }
 
 export async function collectWaitingLeads(mailingId: string, project: string, houseNumber: string): Promise<Result<FullContact[]>> {
