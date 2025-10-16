@@ -138,7 +138,8 @@ export async function fetchContacts(mailingId: string): Promise<Result<MailListR
         const data = await sql<MailListRecord[]>`
             select *
             from mail_list
-            WHERE mailing_id = ${mailingId};
+            WHERE mailing_id = ${mailingId}
+            ORDER BY full_name;
         `;
         return {success: true, data};
     } catch (error: any) {

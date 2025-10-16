@@ -39,7 +39,6 @@ export async function getAmoLeadsByProject(mailingId: string, project: string, h
 
     console.log(`В воронке ${funnelName} найдено лидов: `, amoLeadsResult.data!.length);
     await saveFunnelLeadsCount(mailingId, funnelName, amoLeadsResult.data!.length);
-    console.log('Leads', amoLeadsResult.data!.map(l => l.leadId));
 
     const result: FullContact[] = [];
     for (const lead of amoLeadsResult.data!) {
@@ -59,7 +58,6 @@ export async function getAmoLeadsByProject(mailingId: string, project: string, h
 
     // Берем только собственников
     const filtered = result.filter((contact: FullContact) => contact.owner);
-    console.log(`В воронке ${funnelName} найдено собственников: `, result.length);
     console.log('Collect contacts finish: ', new Date().toLocaleTimeString());
     return {success: true, data: filtered};
 }

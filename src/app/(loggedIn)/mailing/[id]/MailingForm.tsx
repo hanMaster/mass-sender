@@ -3,6 +3,7 @@ import {Label} from "@/components/ui/label";
 import {Mailing, MailListRecord} from "@/lib/data/definitions";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import {recollectContacts, testProfit} from "@/actions/mailing.action";
+import {ScrollArea} from "@/components/ui/scroll-area";
 
 export default function MailingForm({mailing, collectStatus, contacts}: {
     mailing: Mailing;
@@ -31,33 +32,41 @@ export default function MailingForm({mailing, collectStatus, contacts}: {
                 <div className="flex gap-2">
                     <form action={recollectContacts}>
                         <input type="hidden" name="mailingId" value={mailing.id}/>
-                        <Button variant='default' type='submit' className='cursor-pointer'>Пересобрать</Button>
+                        <Button variant='default' type='submit' className='cursor-pointer'
+                                disabled={mailing.is_mail_sent}>Пересобрать</Button>
                     </form>
                     <form action={testProfit}>
                         <Button variant='outline' type='submit'
-                                className='cursor-pointer hover:bg-red-600 hover:text-white'>Отправить</Button>
+                                className='cursor-pointer hover:bg-red-600 hover:text-white'
+                                disabled={mailing.is_mail_sent}
+                        >Отправить</Button>
                     </form>
                 </div>
             </div>
             {contacts.length > 0 && (
-                <Table>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead>№</TableHead>
-                            <TableHead>ФИО</TableHead>
-                            <TableHead>Email</TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {contacts.map((item, index) =>
-                            <TableRow key={item.id}>
-                                <TableCell className="font-medium">{index + 1}</TableCell>
-                                <TableCell>{item.full_name}</TableCell>
-                                <TableCell>{item.email}</TableCell>
-                            </TableRow>
-                        )}
-                    </TableBody>
-                </Table>
+                <>
+                    <ScrollArea className='h-[500px]'>
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead>№</TableHead>
+                                    <TableHead>ФИО</TableHead>
+                                    <TableHead>Email</TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {contacts.map((item, index) =>
+                                    <TableRow key={item.id}>
+                                        <TableCell className="font-medium">{index + 1}</TableCell>
+                                        <TableCell>{item.full_name}</TableCell>
+                                        <TableCell>{item.email}</TableCell>
+                                    </TableRow>
+                                )}
+                            </TableBody>
+                        </Table>
+                    </ScrollArea>
+                    <p>Всего контактов: {contacts.length}</p>
+                </>
             )}
         </div>
     )
