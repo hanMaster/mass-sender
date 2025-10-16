@@ -1,9 +1,13 @@
+'use client';
+
 import {Button} from "@/components/ui/button";
 import {Label} from "@/components/ui/label";
 import {Mailing, MailListRecord} from "@/lib/data/definitions";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import {recollectContacts, testProfit} from "@/actions/mailing.action";
 import {ScrollArea} from "@/components/ui/scroll-area";
+import {useRouter} from "next/navigation";
+import {Spinner} from "@/components/ui/spinner";
 
 export default function MailingForm({mailing, collectStatus, contacts}: {
     mailing: Mailing;
@@ -18,6 +22,13 @@ export default function MailingForm({mailing, collectStatus, contacts}: {
     } else if (collectStatus !== 'done' && collectStatus !== 'in progress') {
         status = collectStatus;
         color = 'text-red-500';
+    }
+    const router = useRouter();
+    if (collectStatus === 'in progress') {
+        setTimeout(() => {
+            console.log('Refresh called', new Date().toLocaleDateString());
+            router.refresh();
+        }, 5000);
     }
 
     return (
@@ -43,6 +54,7 @@ export default function MailingForm({mailing, collectStatus, contacts}: {
                     </form>
                 </div>
             </div>
+            {contacts.length === 0 && <Spinner className="size-8" />}
             {contacts.length > 0 && (
                 <>
                     <ScrollArea className='h-[500px]'>
@@ -65,7 +77,7 @@ export default function MailingForm({mailing, collectStatus, contacts}: {
                             </TableBody>
                         </Table>
                     </ScrollArea>
-                    <p>Всего контактов: {contacts.length}</p>
+                    <h2 className='text-2xl'>Всего контактов: {contacts.length}</h2>
                 </>
             )}
         </div>
