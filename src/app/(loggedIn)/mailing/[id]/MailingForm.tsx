@@ -33,7 +33,7 @@ export default function MailingForm({mailing, collectStatus, contacts}: {
 
     return (
         <div className="flex flex-col gap-2 p-4 md:gap-6 md:p-6">
-            <Label className='text-xl'>Статус сбора контактов: <span className={color}>{status}</span></Label>
+            <h2 className='text-xl font-medium'>Статус сбора контактов: <span className={color}>{status}</span></h2>
             <div className="flex gap-4 justify-between">
                 <div className="flex flex-col gap-2">
                     <Label>Кол-во собранных сделок по воронкам:</Label>
@@ -54,7 +54,7 @@ export default function MailingForm({mailing, collectStatus, contacts}: {
                     </form>
                 </div>
             </div>
-            {contacts.length === 0 && <Spinner className="size-8" />}
+            {contacts.length === 0 && collectStatus === 'in progress' && <Spinner className="size-8"/>}
             {contacts.length > 0 && (
                 <>
                     <ScrollArea className='h-[500px]'>
